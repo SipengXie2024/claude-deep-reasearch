@@ -22,11 +22,12 @@ Use the **question-refiner** skill to ask clarifying questions and generate a st
 ### Step 2: Research Planning
 Break down the research topic into 3-7 subtopics and create a detailed execution plan.
 
-### Step 3: Multi-Agent Research
-Deploy multiple parallel research agents to gather information from different sources:
-- Web Research Agents (3-5 agents): Current information, trends, news
-- Academic/Technical Agent (1-2 agents): Research papers, technical specifications
-- Cross-Reference Agent (1 agent): Fact-checking and verification
+### Step 3: Multi-Agent Research (Academic-First)
+Deploy multiple parallel research agents with **academic sources as PRIMARY**:
+- **Academic Research Agents (3-4 agents) [PRIMARY]**: Use MCP tools (`mcp__arxiv__*`, `mcp__paper-search-mcp__*`) to search arXiv, Google Scholar, PubMed, bioRxiv, medRxiv
+- **Web Research Agents (1-2 agents) [SUPPLEMENTARY]**: Current information, trends, news
+- **Academic Verification Agent (1 agent) [REQUIRED]**: Verify claims against academic literature
+- **Cross-Reference Agent (1 agent) [OPTIONAL]**: Multi-source fact-checking
 
 ### Step 4: Source Triangulation
 Compare findings across multiple sources and validate claims using the A-E quality rating system.

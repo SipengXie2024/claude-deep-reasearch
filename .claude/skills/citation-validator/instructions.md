@@ -353,7 +353,32 @@ def calculate_citation_quality_score(
 
 ## Tool Usage
 
-### WebSearch (for verification)
+### MCP Academic Tools (PRIMARY for academic citations)
+
+**For arXiv papers verification**:
+```markdown
+Use mcp__arxiv__search_papers to verify:
+- Paper exists with claimed title/authors
+- Publication date is correct
+- arXiv ID is valid
+
+Use mcp__arxiv__read_paper to verify:
+- Specific claims match paper content
+- Page numbers and quotes are accurate
+```
+
+**For other academic papers**:
+```markdown
+Use mcp__paper-search-mcp__search_google_scholar to verify:
+- Paper exists in academic databases
+- Citation count and venue are correct
+
+Use mcp__paper-search-mcp__search_pubmed for biomedical:
+- PMID verification
+- Journal and publication details
+```
+
+### WebSearch (for non-academic verification)
 ```markdown
 Search for claims to verify:
 - Exact claim in quotes

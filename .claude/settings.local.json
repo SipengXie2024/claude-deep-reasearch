@@ -12,15 +12,11 @@
       "Bash(dir /s /b)",
       "Bash(dir RESEARCH)",
       "Skill(question-refiner)",
-      "WebFetch(domain:etherscan.io)",
-      "WebFetch(domain:ycharts.com)",
-      "WebFetch(domain:coinlaw.io)",
-      "mcp__ide__getDiagnostics",
-      "WebFetch(domain:yellow.com)",
       "Skill(deep-research)",
       "Skill(academic-search)",
-      "mcp__paper-search__*",
+      "mcp__ide__getDiagnostics",
       "mcp__arxiv__*",
+      "mcp__paper-search-mcp__*",
       "WebFetch(domain:arxiv.org)",
       "WebFetch(domain:semanticscholar.org)",
       "WebFetch(domain:pubmed.ncbi.nlm.nih.gov)",
@@ -29,13 +25,14 @@
       "WebFetch(domain:dl.acm.org)",
       "WebFetch(domain:openreview.net)",
       "WebFetch(domain:paperswithcode.com)",
-      "mcp__paper-search-mcp__search_arxiv",
-      "mcp__paper-search-mcp__search_google_scholar"
+      "WebFetch(domain:nature.com)",
+      "WebFetch(domain:science.org)",
+      "WebFetch(domain:biorxiv.org)",
+      "WebFetch(domain:medrxiv.org)"
     ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "paper-search",
     "arxiv",
     "paper-search-mcp"
   ]

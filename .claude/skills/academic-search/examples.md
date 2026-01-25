@@ -16,8 +16,8 @@
 
 2. **Search Execution**:
    - Use `mcp__arxiv__search_papers` with categories `cs.LG, cs.CL, cs.AI`
-   - Use `mcp__paper-search__search` for broader coverage
-   - WebSearch for Google Scholar results
+   - Use `mcp__paper-search-mcp__search_google_scholar` for broader coverage
+   - Use `mcp__arxiv__read_paper` for full paper content of top results
 
 3. **Sample Output**:
 
@@ -106,9 +106,9 @@
    - Time Frame: 2023
 
 2. **Search Execution**:
-   - Primary: WebSearch with `site:pubmed.ncbi.nlm.nih.gov`
-   - Secondary: `mcp__paper-search__search` for cross-references
-   - Tertiary: WebSearch with `site:clinicaltrials.gov` for trial data
+   - Primary: `mcp__paper-search-mcp__search_pubmed` for PubMed articles
+   - Secondary: `mcp__paper-search-mcp__search_google_scholar` for broader coverage
+   - Tertiary: `mcp__paper-search-mcp__search_biorxiv` and `mcp__paper-search-mcp__search_medrxiv` for preprints
 
 3. **Sample Output**:
 
@@ -196,10 +196,10 @@ RESEARCH/llm-software-development/
 ```
 
 **Additional Steps**:
-1. Find the original paper
-2. Use `mcp__paper-search__get_citations` to find papers citing it
-3. Use `mcp__paper-search__get_references` to find foundational works
-4. Build a citation network view
+1. Find the original paper using `mcp__arxiv__search_papers`
+2. Use `mcp__arxiv__read_paper` to read full paper and extract references
+3. Search for citing papers using `mcp__paper-search-mcp__search_google_scholar` with paper title
+4. Build a citation network view from the findings
 
 **Sample Citation Chain Output**:
 
@@ -247,16 +247,27 @@ mcp__arxiv__get_paper_details(
 ### Paper Search MCP Tools
 
 ```
-# Search Semantic Scholar
-mcp__paper-search__search(
+# Search Google Scholar
+mcp__paper-search-mcp__search_google_scholar(
   query="prompt engineering techniques",
-  limit=20,
-  year="2023-2024"
+  max_results=10
 )
 
-# Get citations for a paper
-mcp__paper-search__get_citations(
-  paper_id="649def34f8be52c8b66281af98ae884c09aef38b"
+# Search PubMed for biomedical topics
+mcp__paper-search-mcp__search_pubmed(
+  query="machine learning drug discovery",
+  max_results=10
+)
+
+# Search preprint servers
+mcp__paper-search-mcp__search_biorxiv(
+  query="CRISPR gene editing",
+  max_results=10
+)
+
+# Read full paper content
+mcp__paper-search-mcp__read_arxiv_paper(
+  paper_id="2201.11903"
 )
 ```
 

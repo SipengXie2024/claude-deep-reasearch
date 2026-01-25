@@ -9,7 +9,7 @@ allowed-tools:
   - Read
   - Write
   - Task
-  - "mcp__paper-search__*"
+  - "mcp__paper-search-mcp__*"
   - "mcp__arxiv__*"
 ---
 
@@ -43,29 +43,50 @@ Choose appropriate databases based on the research domain:
 | Database | Best For | Access Method |
 |----------|----------|---------------|
 | **arXiv** | CS, Physics, Math, AI/ML | `mcp__arxiv__*` tools |
-| **Semantic Scholar** | Cross-disciplinary, citation analysis | `mcp__paper-search__*` tools |
-| **PubMed** | Biomedical, Life Sciences | WebSearch with `site:pubmed.ncbi.nlm.nih.gov` |
-| **OpenAlex** | Open access papers | WebSearch/WebFetch |
-| **Google Scholar** | Broad coverage | WebSearch with `site:scholar.google.com` |
+| **Google Scholar** | Broad coverage, cross-disciplinary | `mcp__paper-search-mcp__search_google_scholar` |
+| **PubMed** | Biomedical, Life Sciences | `mcp__paper-search-mcp__search_pubmed` |
+| **bioRxiv** | Biology preprints | `mcp__paper-search-mcp__search_biorxiv` |
+| **medRxiv** | Medical preprints | `mcp__paper-search-mcp__search_medrxiv` |
 | **IEEE Xplore** | Engineering, Electronics | WebSearch with `site:ieeexplore.ieee.org` |
 | **ACM Digital Library** | Computer Science | WebSearch with `site:dl.acm.org` |
 
 ### Step 3: Execute Search
 
-**For arXiv papers**:
+**For arXiv papers** (PRIMARY):
 ```
 Use mcp__arxiv__search_papers with:
 - query: search terms
-- max_results: 10-20
-- categories: relevant arXiv categories (cs.AI, cs.CL, etc.)
+- max_results: 15-20
+- categories: relevant arXiv categories (cs.AI, cs.CL, cs.LG, cs.CV, etc.)
+- sort_by: "relevance"
 ```
 
-**For Semantic Scholar**:
+**For Google Scholar** (broad coverage):
 ```
-Use mcp__paper-search__search with:
+Use mcp__paper-search-mcp__search_google_scholar with:
 - query: search terms
-- limit: 10-20
-- fields: title, authors, abstract, year, citationCount, venue
+- max_results: 10
+```
+
+**For PubMed** (biomedical):
+```
+Use mcp__paper-search-mcp__search_pubmed with:
+- query: search terms
+- max_results: 10
+```
+
+**For bioRxiv/medRxiv** (preprints):
+```
+Use mcp__paper-search-mcp__search_biorxiv or mcp__paper-search-mcp__search_medrxiv with:
+- query: search terms
+- max_results: 10
+```
+
+**For deep paper reading**:
+```
+Use mcp__arxiv__read_paper with:
+- paper_id: arXiv paper ID (e.g., "2301.12345")
+Returns full paper content in markdown format.
 ```
 
 **For other databases**:
@@ -119,34 +140,39 @@ For each relevant paper, provide standardized metadata:
 
 ## Tool Usage Guidelines
 
-### mcp__arxiv__* Tools
+### mcp__arxiv__* Tools (PRIMARY)
 
-- `mcp__arxiv__search_papers`: Search arXiv papers
+- `mcp__arxiv__search_papers`: Search arXiv papers with advanced filtering
 - `mcp__arxiv__download_paper`: Download paper PDF
-- `mcp__arxiv__get_paper_details`: Get detailed paper info
+- `mcp__arxiv__read_paper`: Read full paper content in markdown format
+- `mcp__arxiv__list_papers`: List available downloaded papers
 
 **arXiv Categories Reference**:
 - `cs.AI` - Artificial Intelligence
 - `cs.CL` - Computation and Language (NLP)
 - `cs.CV` - Computer Vision
 - `cs.LG` - Machine Learning
+- `cs.MA` - Multi-Agent Systems
 - `cs.NE` - Neural and Evolutionary Computing
 - `stat.ML` - Machine Learning (Statistics)
 
-### mcp__paper-search__* Tools
+### mcp__paper-search-mcp__* Tools
 
-- `mcp__paper-search__search`: Search Semantic Scholar
-- `mcp__paper-search__get_paper`: Get paper details by ID
-- `mcp__paper-search__get_citations`: Get citing papers
-- `mcp__paper-search__get_references`: Get referenced papers
+- `mcp__paper-search-mcp__search_arxiv`: Alternative arXiv search
+- `mcp__paper-search-mcp__search_google_scholar`: Search Google Scholar
+- `mcp__paper-search-mcp__search_pubmed`: Search PubMed (biomedical)
+- `mcp__paper-search-mcp__search_biorxiv`: Search bioRxiv preprints
+- `mcp__paper-search-mcp__search_medrxiv`: Search medRxiv preprints
+- `mcp__paper-search-mcp__read_arxiv_paper`: Read arXiv paper content
+- `mcp__paper-search-mcp__download_arxiv`: Download arXiv PDF
 
-### WebSearch for Academic Databases
+### WebSearch for Academic Databases (FALLBACK)
 
-Use domain filtering for specific databases:
+Use domain filtering for databases without MCP tools:
 ```
-WebSearch with allowed_domains: ["pubmed.ncbi.nlm.nih.gov"]
 WebSearch with allowed_domains: ["ieeexplore.ieee.org"]
 WebSearch with allowed_domains: ["dl.acm.org"]
+WebSearch with allowed_domains: ["nature.com", "science.org"]
 ```
 
 ## Output Format

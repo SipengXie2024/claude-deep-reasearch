@@ -79,17 +79,33 @@ The GoT framework manages research as a graph with these transformations:
 
 ### Multi-Agent Deployment Strategy
 
+**⚠️ Academic-First Research**: All research MUST prioritize academic sources via MCP tools.
+
 When executing research, deploy agents in parallel:
 
 ```
-Phase 3: Iterative Querying
-├── Web Research Agents (3-5): Current info, trends, news
-├── Academic/Technical Agents (1-2): Papers, specifications
-└── Cross-Reference Agent (1): Fact-checking, verification
+Phase 3: Iterative Querying (Academic-First)
+├── Academic Research Agents (3-4) [PRIMARY]:
+│   ├── Use mcp__arxiv__search_papers
+│   ├── Use mcp__paper-search-mcp__search_google_scholar
+│   ├── Use mcp__paper-search-mcp__search_pubmed
+│   └── Use mcp__arxiv__read_paper for deep analysis
+├── Web Research Agents (1-2) [SUPPLEMENTARY]: Current info, news
+├── Academic Verification Agent (1) [REQUIRED]: Verify claims with papers
+└── Cross-Reference Agent (1) [OPTIONAL]: Multi-source fact-checking
 ```
+
+**MCP Academic Tools Priority**:
+1. `mcp__arxiv__search_papers` - arXiv (CS, Physics, Math, AI/ML)
+2. `mcp__paper-search-mcp__search_google_scholar` - Broad coverage
+3. `mcp__paper-search-mcp__search_pubmed` - Biomedical
+4. `mcp__paper-search-mcp__search_biorxiv` - Biology preprints
+5. `mcp__paper-search-mcp__search_medrxiv` - Medical preprints
+6. `mcp__arxiv__read_paper` - Full paper content
 
 Each agent receives:
 - Clear description of research focus
+- **Mandatory MCP tool usage instructions**
 - Specific search queries
 - Expected output format
 - Citation requirements

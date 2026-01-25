@@ -1,6 +1,17 @@
 ---
 name: research-executor
 description: 执行完整的 7 阶段深度研究流程。接收结构化研究任务，自动部署多个并行研究智能体，生成带完整引用的综合研究报告。当用户有结构化的研究提示词时使用此技能。
+user-invocable: true
+argument-hint: "[structured research prompt]"
+allowed-tools:
+  - Task
+  - WebSearch
+  - WebFetch
+  - Read
+  - Write
+  - Skill(academic-search)
+  - "mcp__arxiv__*"
+  - "mcp__paper-search-mcp__*"
 ---
 
 # Research Executor
@@ -37,19 +48,39 @@ Break down the main research question into actionable subtopics and create a res
 
 Deploy multiple Task agents in parallel to gather information from different sources.
 
-**Agent Types**:
-- **Web Research Agents (3-5 agents)**: Current information, trends, news, industry reports
-- **Academic Research Agent (1-2 agents)**: Use the `academic-search` skill via `Skill(academic-search)` tool to search arXiv, Semantic Scholar, PubMed, and other academic databases for peer-reviewed papers and technical specifications
-- **Cross-Reference Agent (1 agent)**: Fact-checking and verification
+**⚠️ CRITICAL: Academic-First Research Strategy**
 
-**Academic Search Integration**:
-For topics requiring scholarly literature:
-1. Invoke `Skill(academic-search)` with relevant keywords
-2. The skill will automatically use MCP tools (`mcp__arxiv__*`, `mcp__paper-search__*`) to search multiple databases
-3. Results include standardized metadata, quality ratings, and citation-ready references
-4. Academic papers provide higher quality ratings (A-B) for source triangulation
+ALL research agents MUST prioritize academic sources via MCP tools. Academic papers provide higher quality (A-B rated) sources with proper citations.
 
-**Execution Protocol**: Launch ALL agents in a single response using multiple Task tool calls. Use `run_in_background: true` for long-running agents.
+**Agent Types (Priority Order)**:
+1. **Academic Research Agents (3-4 agents) [PRIMARY]**:
+   - Use MCP tools directly: `mcp__arxiv__search_papers`, `mcp__paper-search-mcp__search_google_scholar`, `mcp__paper-search-mcp__search_pubmed`
+   - Deep reading: `mcp__arxiv__read_paper` for full paper content
+   - Or invoke `Skill(academic-search)` for automated multi-database search
+
+2. **Web Research Agents (1-2 agents) [SUPPLEMENTARY]**: Current info, news, industry reports
+
+3. **Academic Verification Agent (1 agent) [REQUIRED]**: Verify claims against academic literature using MCP tools
+
+4. **Cross-Reference Agent (1 agent) [OPTIONAL]**: Multi-source fact-checking
+
+**MCP Academic Tools Priority**:
+```
+Tier 1 (ALWAYS use first):
+- mcp__arxiv__search_papers
+- mcp__paper-search-mcp__search_google_scholar
+- mcp__paper-search-mcp__search_pubmed
+- mcp__paper-search-mcp__search_biorxiv
+
+Tier 2 (for key papers):
+- mcp__arxiv__read_paper
+- mcp__arxiv__download_paper
+
+Tier 3 (supplement only):
+- WebSearch with academic domain filtering
+```
+
+**Execution Protocol**: Launch ALL agents in a single response using multiple Task tool calls. Academic agents MUST be included. Use `run_in_background: true` for long-running agents.
 
 ### Phase 4: Source Triangulation
 

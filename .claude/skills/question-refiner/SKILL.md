@@ -1,6 +1,12 @@
 ---
 name: question-refiner
 description: 将原始研究问题细化为结构化的深度研究任务。通过提问澄清需求，生成符合 OpenAI/Google Deep Research 标准的结构化提示词。当用户提出研究问题、需要帮助定义研究范围、或想要生成结构化研究提示词时使用此技能。
+user-invocable: true
+argument-hint: "[raw research question or topic]"
+allowed-tools:
+  - Read
+  - Write
+  - AskUserQuestion
 ---
 
 # Question Refiner

@@ -34,12 +34,43 @@ Graph of Thoughts (GoT) is a framework inspired by [SPCL, ETH Zürich](https://g
 - Example: Generate(3) from root → 3 parallel research paths
 ```
 
-**Agent Template for Generate**:
+**⚠️ Academic-First Strategy for Generate**:
+When spawning research agents, prioritize academic sources:
+- **60-70% Academic Agents**: Use MCP tools (`mcp__arxiv__search_papers`, `mcp__paper-search-mcp__search_google_scholar`, `mcp__paper-search-mcp__search_pubmed`)
+- **20-30% Web Research Agents**: Current info, news (supplementary)
+- **10% Verification Agents**: Cross-reference claims
+
+**Agent Template for Generate (Academic)**:
 ```
 You are exploring [specific aspect] of [topic]. Starting from the context:
 [PARENT NODE CONTENT]
 
-Your task: Research this specific aspect and provide:
+**MANDATORY: Use MCP academic tools as primary research method.**
+
+Step 1 - Academic Search:
+Use these MCP tools to find relevant papers:
+- mcp__arxiv__search_papers (for CS, Physics, Math, AI/ML)
+- mcp__paper-search-mcp__search_google_scholar (broad coverage)
+- mcp__paper-search-mcp__search_pubmed (biomedical topics)
+
+Step 2 - Deep Reading (for top papers):
+- Use mcp__arxiv__read_paper to read full paper content
+
+Step 3 - Structured Output:
+1. Key findings on this aspect (with paper citations)
+2. Supporting evidence with full citations (Author, Year, Title, DOI/URL)
+3. Confidence level in findings (High/Medium/Low)
+4. Related aspects worth exploring further
+
+Return your findings as a structured node.
+```
+
+**Agent Template for Generate (Web - Supplementary)**:
+```
+You are exploring [specific aspect] of [topic]. Starting from the context:
+[PARENT NODE CONTENT]
+
+Your task: Research current developments and non-academic sources:
 1. Key findings on this aspect
 2. Supporting evidence with citations
 3. Confidence level in findings (High/Medium/Low)

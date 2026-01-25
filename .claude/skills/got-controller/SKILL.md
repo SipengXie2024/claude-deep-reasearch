@@ -1,6 +1,16 @@
 ---
 name: got-controller
 description: Graph of Thoughts (GoT) Controller - 管理研究图状态，执行图操作（Generate, Aggregate, Refine, Score），优化研究路径质量。当研究主题复杂或多方面、需要策略性探索（深度 vs 广度）、高质量研究时使用此技能。
+user-invocable: true
+argument-hint: "[research topic for GoT-managed research]"
+allowed-tools:
+  - Task
+  - WebSearch
+  - WebFetch
+  - Read
+  - Write
+  - "mcp__arxiv__*"
+  - "mcp__paper-search-mcp__*"
 ---
 
 # GoT Controller
@@ -31,6 +41,17 @@ Graph of Thoughts (GoT) is a framework inspired by [SPCL, ETH Zürich](https://g
 - Exploring multiple angles simultaneously
 
 **Implementation**: Spawn k parallel research agents, each exploring a distinct aspect
+
+**⚠️ Academic-First Strategy for Generate Operations**:
+When spawning research agents, use the following distribution:
+- **60-70% Academic Agents**: Use MCP tools (`mcp__arxiv__search_papers`, `mcp__paper-search-mcp__*`)
+- **20-30% Web Research Agents**: Current info, news (supplementary)
+- **10% Verification Agents**: Cross-reference claims
+
+Example for Generate(5):
+- 3 Academic Research Agents (using MCP tools)
+- 1 Web Research Agent
+- 1 Verification Agent
 
 ### 2. Aggregate(k)
 

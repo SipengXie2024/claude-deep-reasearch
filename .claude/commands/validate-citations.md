@@ -1,7 +1,7 @@
 ---
 description: 验证研究文档中的引用准确性、完整性和质量
 argument-hint: [文件路径]
-allowed-tools: Read, WebSearch, WebFetch, Write
+allowed-tools: Read, WebSearch, WebFetch, Write, mcp__arxiv__*, mcp__paper-search-mcp__*
 ---
 
 # Citation Validation

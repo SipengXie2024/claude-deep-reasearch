@@ -48,10 +48,12 @@ Use the **research-executor** skill (Phase 2: Retrieval Planning only) to:
 
 ...
 
-### Multi-Agent Deployment Strategy:
+### Multi-Agent Deployment Strategy (Academic-First):
 - **Total Agents**: [number]
-- **Agent Types**: [web research, academic, verification]
-- **Expected Timeline**: [estimate]
+- **Academic Research Agents (3-4) [PRIMARY]**: Use MCP tools (mcp__arxiv__*, mcp__paper-search-mcp__*)
+- **Web Research Agents (1-2) [SUPPLEMENTARY]**: Current info, news
+- **Academic Verification Agent (1) [REQUIRED]**: Verify claims against papers
+- **Cross-Reference Agent (1) [OPTIONAL]**: Multi-source fact-checking
 
 ### Output Structure:
 [Describe the folder and file structure]

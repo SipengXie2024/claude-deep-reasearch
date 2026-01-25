@@ -61,101 +61,173 @@ Ready to proceed? (User: Yes/No/Modifications needed)
 
 Deploy multiple Task agents in parallel to gather information from different sources.
 
+**⚠️ CRITICAL: Academic-First Research Strategy**
+
+**ALL research agents MUST prioritize academic sources over general web sources.** Academic papers provide higher quality, peer-reviewed information with proper citations. Use MCP academic tools as the PRIMARY research method.
+
+**Source Priority Order (MANDATORY)**:
+1. **Tier 1 - Academic MCP Tools** (ALWAYS use first):
+   - `mcp__arxiv__search_papers` - arXiv papers
+   - `mcp__paper-search-mcp__search_google_scholar` - Google Scholar
+   - `mcp__paper-search-mcp__search_pubmed` - PubMed (biomedical)
+   - `mcp__paper-search-mcp__search_biorxiv` - bioRxiv preprints
+   - `mcp__paper-search-mcp__search_medrxiv` - medRxiv preprints
+
+2. **Tier 2 - Paper Deep Reading** (for key papers):
+   - `mcp__arxiv__download_paper` - Download PDF
+   - `mcp__arxiv__read_paper` - Read full content in markdown
+   - `mcp__paper-search-mcp__read_arxiv_paper` - Alternative reader
+
+3. **Tier 3 - Web Sources** (supplement only):
+   - WebSearch with academic domain filtering
+   - WebFetch for specific authoritative URLs
+
 **Agent Types and Deployment**:
 
-#### Agent Type 1: Web Research Agents (3-5 agents)
-**Focus**: Current information, trends, news, industry reports
+#### Agent Type 1: Academic Research Agents (3-4 agents) [PRIMARY]
+**Focus**: Peer-reviewed papers, systematic reviews, meta-analyses
+**Priority**: HIGHEST - Deploy these agents FIRST
 
 **Agent Template**:
 ```
-Research [specific aspect] of [main topic]. Use the following tools:
-1. Start with WebSearch to find relevant sources
-2. Use WebFetch to extract content from promising URLs
-3. Use mcp__web_reader__webReader for better content extraction
-4. Use mcp__4_5v_mcp__analyze_image if you encounter relevant charts/graphs
+Research academic literature on [specific aspect] of [main topic].
+
+**MANDATORY: Use MCP academic tools as primary research method.**
+
+Step 1 - Academic Database Search (REQUIRED):
+Use these MCP tools to search multiple databases in parallel:
+
+1. mcp__arxiv__search_papers with parameters:
+   - query: "[search terms]"
+   - categories: ["cs.AI", "cs.LG", "cs.CL", "cs.CV", "cs.MA"] (adjust based on topic)
+   - max_results: 15-20
+   - sort_by: "relevance"
+
+2. mcp__paper-search-mcp__search_google_scholar with:
+   - query: "[search terms]"
+   - max_results: 10
+
+3. mcp__paper-search-mcp__search_pubmed (if biomedical topic) with:
+   - query: "[search terms]"
+   - max_results: 10
+
+Step 2 - Deep Paper Analysis (for top 3-5 papers):
+For the most relevant papers found:
+- Use mcp__arxiv__read_paper to read full content
+- Extract key findings, methodology, and conclusions
+
+Step 3 - Structured Output:
+For each paper, provide:
+- Title, Authors, Year, Venue
+- arXiv ID or DOI
+- Quality Rating (A-E based on venue and methodology)
+- Key findings relevant to research question
+- Citation count (if available)
+- Direct URL
 
 Focus on finding:
-- Recent information (prioritize sources from [timeframe])
-- Authoritative sources matching [source quality requirements]
-- Specific data/statistics with verifiable sources
-- Multiple perspectives on the topic
-
-Provide a structured summary with:
-- Key findings
-- All source URLs with full citations
-- Confidence ratings for claims (High/Medium/Low)
-- Any contradictions or gaps found
+- Systematic reviews and meta-analyses (highest priority)
+- Recent peer-reviewed papers (last 3-5 years)
+- Seminal/foundational papers (high citation count)
+- Multiple perspectives from different research groups
 ```
 
-#### Agent Type 2: Academic/Technical Agent (1-2 agents)
-**Focus**: Research papers, technical specifications, methodologies
-
-**IMPORTANT**: For academic research, use the `academic-search` skill or MCP tools directly for better results.
-
-**Option A - Use Academic Search Skill** (Recommended):
-```
-Invoke Skill(academic-search) with the research topic to automatically search multiple academic databases including arXiv, Semantic Scholar, PubMed, and Google Scholar.
-```
-
-**Option B - Direct MCP Tool Usage**:
-```
-Find technical/academic information about [topic aspect].
-
-Tools to use (in priority order):
-1. mcp__arxiv__search_papers - Search arXiv for CS, Physics, Math, AI/ML papers
-   - Use categories parameter: ["cs.AI", "cs.LG", "cs.CL", "cs.MA"] etc.
-   - Returns structured metadata with authors, abstracts, categories
-
-2. mcp__paper-search-mcp__search_arxiv - Alternative arXiv search
-3. mcp__paper-search-mcp__search_google_scholar - Broad academic coverage
-4. mcp__paper-search-mcp__search_pubmed - Biomedical and life sciences
-
-5. mcp__arxiv__download_paper - Download paper for detailed analysis
-6. mcp__arxiv__read_paper - Read full paper content in markdown
-
-7. WebSearch with domain filtering as fallback:
-   - allowed_domains: ["scholar.google.com", "semanticscholar.org", "ieeexplore.ieee.org", "dl.acm.org"]
-
-Look for:
-- Peer-reviewed papers (prioritize A-B quality sources)
-- Technical specifications
-- Methodologies and frameworks
-- Scientific evidence
-- Expert consensus
-
-Include proper academic citations:
-- Author names, publication year
-- Paper title, journal/conference name
-- DOI or arXiv ID
-- Direct URL
-- Key findings and sample sizes
-```
-
-#### Agent Type 3: Cross-Reference Agent (1 agent)
-**Focus**: Fact-checking and verification
+#### Agent Type 2: Web Research Agents (1-2 agents) [SUPPLEMENTARY]
+**Focus**: Current news, industry reports, non-academic sources
+**Priority**: LOWER - Use only to supplement academic findings
 
 **Agent Template**:
 ```
-Verify the following claims about [topic]:
+Research current developments and non-academic information about [specific aspect] of [main topic].
+
+**NOTE**: This agent supplements academic research. Prioritize authoritative sources.
+
+Step 1 - Academic Domain Web Search:
+Use WebSearch with academic domain filtering FIRST:
+- allowed_domains: ["scholar.google.com", "semanticscholar.org", "ieeexplore.ieee.org", "dl.acm.org", "nature.com", "science.org"]
+
+Step 2 - Industry and News Sources:
+Use WebSearch for:
+- Recent news (prioritize sources from [timeframe])
+- Industry reports and white papers
+- Official organizational statements
+
+Step 3 - Content Extraction:
+Use WebFetch to extract content from promising URLs.
+
+Provide a structured summary with:
+- Key findings with source URLs
+- Source quality rating (A-E)
+- Confidence ratings for claims (High/Medium/Low)
+- Note: Mark non-peer-reviewed sources clearly
+```
+
+#### Agent Type 3: Academic Verification Agent (1 agent) [REQUIRED]
+**Focus**: Cross-reference claims against academic literature
+**Priority**: HIGH - Essential for citation validation
+
+**Agent Template**:
+```
+Verify the following claims about [topic] using academic sources:
 [List key claims from other agents]
 
-Use multiple search queries with WebSearch to find:
-- Supporting evidence
+**MANDATORY: Use MCP academic tools for verification.**
+
+For each claim:
+1. Search for supporting academic papers using:
+   - mcp__arxiv__search_papers
+   - mcp__paper-search-mcp__search_google_scholar
+
+2. Read relevant papers to verify claims:
+   - mcp__arxiv__read_paper for detailed verification
+
+3. Provide verification report:
+   - Claim text
+   - Verification status: Verified/Partially Verified/Unverified/Contradicted
+   - Supporting academic sources (minimum 2 for "Verified" status)
+   - Contradicting sources (if any)
+   - Source quality ratings (A-E)
+   - Confidence level: High/Medium/Low
+```
+
+#### Agent Type 4: Cross-Reference Agent (1 agent) [OPTIONAL]
+**Focus**: Fact-checking across all source types
+**Priority**: MEDIUM - Deploy if time permits
+
+**Agent Template**:
+```
+Cross-reference findings from all agents about [topic]:
+[List key claims from other agents]
+
+Search for:
+- Supporting evidence from multiple independent sources
 - Contradicting information
-- Original sources
+- Original primary sources
 
 For each claim, provide:
 - Confidence rating: High/Medium/Low
-- Supporting sources (minimum 2 for high confidence)
+- Academic sources supporting (with quality ratings)
+- Non-academic sources supporting
 - Contradicting sources (if any)
 - Explanation of any discrepancies
 ```
 
+**Recommended Agent Deployment Strategy**:
+
+| Research Type | Academic Agents | Web Agents | Verification | Cross-Ref |
+|---------------|-----------------|------------|--------------|-----------|
+| Scientific/Technical | 4 | 1 | 1 | Optional |
+| Medical/Health | 3 (with PubMed focus) | 1 | 1 | 1 |
+| Technology/Industry | 3 | 2 | 1 | Optional |
+| Policy/Social | 2 | 2 | 1 | 1 |
+
 **Execution Protocol**:
 1. **Launch ALL agents in a single response** using multiple Task tool calls
-2. Use `run_in_background: true` for long-running agents
-3. Collect results using TaskOutput when agents complete
-4. Track agent progress with TodoWrite
+2. **Academic agents MUST be included** in every research execution
+3. Use `run_in_background: true` for long-running agents
+4. Collect results using TaskOutput when agents complete
+5. Track agent progress with TodoWrite
+6. **Prioritize findings from academic sources** in synthesis phase
 
 ### Phase 4: Source Triangulation
 
