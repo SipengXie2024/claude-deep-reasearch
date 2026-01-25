@@ -10,7 +10,33 @@
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_snapshot",
       "Bash(dir /s /b)",
-      "Bash(dir RESEARCH)"
+      "Bash(dir RESEARCH)",
+      "Skill(question-refiner)",
+      "WebFetch(domain:etherscan.io)",
+      "WebFetch(domain:ycharts.com)",
+      "WebFetch(domain:coinlaw.io)",
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:yellow.com)",
+      "Skill(deep-research)",
+      "Skill(academic-search)",
+      "mcp__paper-search__*",
+      "mcp__arxiv__*",
+      "WebFetch(domain:arxiv.org)",
+      "WebFetch(domain:semanticscholar.org)",
+      "WebFetch(domain:pubmed.ncbi.nlm.nih.gov)",
+      "WebFetch(domain:scholar.google.com)",
+      "WebFetch(domain:ieeexplore.ieee.org)",
+      "WebFetch(domain:dl.acm.org)",
+      "WebFetch(domain:openreview.net)",
+      "WebFetch(domain:paperswithcode.com)",
+      "mcp__paper-search-mcp__search_arxiv",
+      "mcp__paper-search-mcp__search_google_scholar"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "paper-search",
+    "arxiv",
+    "paper-search-mcp"
+  ]
 }

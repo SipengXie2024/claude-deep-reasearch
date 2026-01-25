@@ -90,17 +90,34 @@ Provide a structured summary with:
 #### Agent Type 2: Academic/Technical Agent (1-2 agents)
 **Focus**: Research papers, technical specifications, methodologies
 
-**Agent Template**:
+**IMPORTANT**: For academic research, use the `academic-search` skill or MCP tools directly for better results.
+
+**Option A - Use Academic Search Skill** (Recommended):
+```
+Invoke Skill(academic-search) with the research topic to automatically search multiple academic databases including arXiv, Semantic Scholar, PubMed, and Google Scholar.
+```
+
+**Option B - Direct MCP Tool Usage**:
 ```
 Find technical/academic information about [topic aspect].
 
-Tools to use:
-1. WebSearch for academic papers and technical resources
-2. WebFetch for PDF extraction and content analysis
-3. Save important findings to files using Read/Write tools
+Tools to use (in priority order):
+1. mcp__arxiv__search_papers - Search arXiv for CS, Physics, Math, AI/ML papers
+   - Use categories parameter: ["cs.AI", "cs.LG", "cs.CL", "cs.MA"] etc.
+   - Returns structured metadata with authors, abstracts, categories
+
+2. mcp__paper-search-mcp__search_arxiv - Alternative arXiv search
+3. mcp__paper-search-mcp__search_google_scholar - Broad academic coverage
+4. mcp__paper-search-mcp__search_pubmed - Biomedical and life sciences
+
+5. mcp__arxiv__download_paper - Download paper for detailed analysis
+6. mcp__arxiv__read_paper - Read full paper content in markdown
+
+7. WebSearch with domain filtering as fallback:
+   - allowed_domains: ["scholar.google.com", "semanticscholar.org", "ieeexplore.ieee.org", "dl.acm.org"]
 
 Look for:
-- Peer-reviewed papers
+- Peer-reviewed papers (prioritize A-B quality sources)
 - Technical specifications
 - Methodologies and frameworks
 - Scientific evidence
@@ -109,7 +126,8 @@ Look for:
 Include proper academic citations:
 - Author names, publication year
 - Paper title, journal/conference name
-- DOI or direct URL
+- DOI or arXiv ID
+- Direct URL
 - Key findings and sample sizes
 ```
 

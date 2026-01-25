@@ -1,7 +1,7 @@
 ---
 description: 对指定主题执行完整的深度研究流程，从问题细化到最终报告生成
 argument-hint: [研究主题或问题]
-allowed-tools: Task, WebSearch, WebFetch, mcp__web_reader__webReader, Read, Write, TodoWrite
+allowed-tools: Task, WebSearch, WebFetch, mcp__web_reader__webReader, Read, Write, TodoWrite, Skill(academic-search), mcp__arxiv__*, mcp__paper-search-mcp__*
 ---
 
 # Deep Research

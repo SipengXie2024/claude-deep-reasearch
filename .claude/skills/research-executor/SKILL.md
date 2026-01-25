@@ -39,8 +39,15 @@ Deploy multiple Task agents in parallel to gather information from different sou
 
 **Agent Types**:
 - **Web Research Agents (3-5 agents)**: Current information, trends, news, industry reports
-- **Academic/Technical Agent (1-2 agents)**: Research papers, technical specifications, methodologies
+- **Academic Research Agent (1-2 agents)**: Use the `academic-search` skill via `Skill(academic-search)` tool to search arXiv, Semantic Scholar, PubMed, and other academic databases for peer-reviewed papers and technical specifications
 - **Cross-Reference Agent (1 agent)**: Fact-checking and verification
+
+**Academic Search Integration**:
+For topics requiring scholarly literature:
+1. Invoke `Skill(academic-search)` with relevant keywords
+2. The skill will automatically use MCP tools (`mcp__arxiv__*`, `mcp__paper-search__*`) to search multiple databases
+3. Results include standardized metadata, quality ratings, and citation-ready references
+4. Academic papers provide higher quality ratings (A-B) for source triangulation
 
 **Execution Protocol**: Launch ALL agents in a single response using multiple Task tool calls. Use `run_in_background: true` for long-running agents.
 
