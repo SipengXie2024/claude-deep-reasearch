@@ -57,9 +57,9 @@ Break down the main research question into actionable subtopics and create a res
 Ready to proceed? (User: Yes/No/Modifications needed)
 ```
 
-### Phase 3: Iterative Querying (Multi-Agent Execution)
+### Phase 3: Iterative Querying (Team-Based Research)
 
-Deploy multiple Task agents in parallel to gather information from different sources.
+Deploy a coordinated research team for complex topics (4+ subtopics) or independent Task agents for simple research (1-3 subtopics).
 
 **⚠️ CRITICAL: Academic-First Research Strategy**
 
@@ -82,17 +82,170 @@ Deploy multiple Task agents in parallel to gather information from different sou
    - WebSearch with academic domain filtering
    - WebFetch for specific authoritative URLs
 
-**Agent Types and Deployment**:
+---
 
-#### Agent Type 1: Academic Research Agents (3-4 agents) [PRIMARY]
+## Mode Selection: Teams vs Sub-Agents
+
+**Auto-detect mode based on subtopic count**:
+
+| Subtopics | Mode | Rationale |
+|-----------|------|-----------|
+| 1-3 | Task Sub-Agents (backward compatible) | Simpler, faster startup |
+| 4+ | Agent Teams | Better coordination, progressive synthesis, verification loops |
+| Fallback | Task Sub-Agents | If TeamCreate unavailable |
+
+---
+
+## Mode A: Agent Teams (4+ Subtopics) — PREFERRED
+
+### Step 1: Create Team
+
+```
+TeamCreate:
+  team_name: "research-{topic_slug}"
+  description: "Deep research on {topic}"
+```
+
+### Step 2: Create Tasks with Dependencies
+
+```
+# Research tasks (parallel, no dependencies)
+TaskCreate: "Research {subtopic_1}" with description and activeForm
+TaskCreate: "Research {subtopic_2}"
+TaskCreate: "Research {subtopic_3}"
+TaskCreate: "Research {subtopic_4}"
+TaskCreate: "Web research on {topic}"
+
+# Verification tasks (blocked by research)
+TaskCreate: "Verify subtopic 1 findings"
+  → TaskUpdate: addBlockedBy [subtopic_1_task_id]
+TaskCreate: "Verify subtopic 2 findings"
+  → TaskUpdate: addBlockedBy [subtopic_2_task_id]
+
+# Synthesis task (blocked by first 2 research tasks)
+TaskCreate: "Progressive synthesis"
+  → TaskUpdate: addBlockedBy [subtopic_1_task_id, subtopic_2_task_id]
+
+# QA task (blocked by synthesis)
+TaskCreate: "Quality assurance"
+  → TaskUpdate: addBlockedBy [synthesis_task_id]
+```
+
+### Step 3: Spawn Teammates
+
+Launch teammates using the Task tool with `team_name` parameter. Each teammate joins the team and can communicate via SendMessage.
+
+```
+Task (team_name: "research-{topic_slug}", name: "academic-1"):
+  → Academic research agent for subtopic 1
+
+Task (team_name: "research-{topic_slug}", name: "academic-2"):
+  → Academic research agent for subtopic 2
+
+Task (team_name: "research-{topic_slug}", name: "academic-3"):
+  → Academic research agent for subtopic 3
+
+Task (team_name: "research-{topic_slug}", name: "web-researcher"):
+  → Web research agent
+
+Task (team_name: "research-{topic_slug}", name: "verifier"):
+  → Verification agent
+
+Task (team_name: "research-{topic_slug}", name: "synthesizer"):
+  → Progressive synthesis agent
+```
+
+### Step 4: Assign Tasks
+
+```
+TaskUpdate: task_id_1, owner: "academic-1"
+TaskUpdate: task_id_2, owner: "academic-2"
+TaskUpdate: task_id_3, owner: "academic-3"
+TaskUpdate: task_id_web, owner: "web-researcher"
+TaskUpdate: task_id_verify, owner: "verifier"
+TaskUpdate: task_id_synth, owner: "synthesizer"
+```
+
+### Step 5: Monitor and GoT Score
+
+The main controller receives messages automatically from teammates:
+
+**When finding report received**:
+1. Assess quality using GoT Score (0-10)
+2. If score >= 7.0: Accept, save to file, trigger related tasks
+3. If score 6.0-7.0: Request refinement via SendMessage
+4. If score < 6.0: Send redirect with new research direction
+
+**When 2+ research tasks complete**:
+1. SendMessage to synthesizer: trigger progressive synthesis
+2. Include file paths to completed findings
+
+### Step 6: Progressive Synthesis
+
+```
+SendMessage:
+  type: "message"
+  recipient: "synthesizer"
+  content: "[SYNTHESIS TRIGGER] 2+ findings ready at RESEARCH/{topic}/research_notes/"
+  summary: "Trigger progressive synthesis"
+```
+
+### Step 7: Verification Feedback Loop
+
+```
+# Route claims to verifier
+SendMessage:
+  type: "message"
+  recipient: "verifier"
+  content: "[VERIFICATION REQUEST] Verify these claims..."
+  summary: "Verify research claims"
+
+# If issues found, route back to researcher
+SendMessage:
+  type: "message"
+  recipient: "academic-1"
+  content: "[RESEARCH REDIRECT] Need more evidence for..."
+  summary: "Additional research needed"
+```
+
+### Step 8: Shutdown and Cleanup
+
+```
+# Graceful shutdown
+SendMessage type: "shutdown_request" to each teammate
+# Wait for responses
+TeamDelete  # Clean up team resources
+```
+
+---
+
+## Mode B: Task Sub-Agents (1-3 Subtopics) — BACKWARD COMPATIBLE
+
+For simple research, continue using the traditional approach:
+
+1. **Launch ALL agents in a single response** using multiple Task tool calls
+2. **Academic agents MUST be included** in every research execution
+3. Use `run_in_background: true` for long-running agents
+4. Collect results using TaskOutput when agents complete
+5. **Prioritize findings from academic sources** in synthesis phase
+
+---
+
+## Agent Templates (Used in Both Modes)
+
+### Agent Type 1: Academic Research Agents (3-4 agents) [PRIMARY]
 **Focus**: Peer-reviewed papers, systematic reviews, meta-analyses
 **Priority**: HIGHEST - Deploy these agents FIRST
 
-**Agent Template**:
+**Agent Template (Team Mode)**:
 ```
-Research academic literature on [specific aspect] of [main topic].
+You are an academic research agent on a research team. Your task is to research [{subtopic}] related to [{main_topic}].
 
-**MANDATORY: Use MCP academic tools as primary research method.**
+## Your Task
+Subtopic: {subtopic}
+Research questions: {questions}
+
+## MANDATORY: Use MCP Academic Tools
 
 Step 1 - Academic Database Search (REQUIRED):
 Use these MCP tools to search multiple databases in parallel:
@@ -116,14 +269,26 @@ For the most relevant papers found:
 - Use mcp__arxiv__read_paper to read full content
 - Extract key findings, methodology, and conclusions
 
-Step 3 - Structured Output:
-For each paper, provide:
-- Title, Authors, Year, Venue
-- arXiv ID or DOI
-- Quality Rating (A-E based on venue and methodology)
-- Key findings relevant to research question
-- Citation count (if available)
-- Direct URL
+Step 3 - Save findings to file:
+Write your findings to: RESEARCH/{topic}/research_notes/{agent_name}_findings.md
+
+Step 4 - Report to main controller:
+Use SendMessage to report findings:
+- type: "message"
+- recipient: "team-lead"
+- content: Your structured finding report with [FINDING REPORT] header
+- summary: "Completed {subtopic} research"
+
+Include in your report:
+- Self-assessed quality score (0-10)
+- For each paper: Title, Authors, Year, Venue, arXiv ID/DOI, Quality Rating (A-E), Key findings, URL
+- Claims that need verification (if any)
+
+Step 5 - Update task status:
+Use TaskUpdate to mark your task as completed.
+
+Step 6 - Check for new tasks:
+Use TaskList to see if there are new unassigned tasks you can take on.
 
 Focus on finding:
 - Systematic reviews and meta-analyses (highest priority)
@@ -132,13 +297,13 @@ Focus on finding:
 - Multiple perspectives from different research groups
 ```
 
-#### Agent Type 2: Web Research Agents (1-2 agents) [SUPPLEMENTARY]
+### Agent Type 2: Web Research Agents (1-2 agents) [SUPPLEMENTARY]
 **Focus**: Current news, industry reports, non-academic sources
 **Priority**: LOWER - Use only to supplement academic findings
 
-**Agent Template**:
+**Agent Template (Team Mode)**:
 ```
-Research current developments and non-academic information about [specific aspect] of [main topic].
+You are a web research agent on a research team. Your task is to research current developments about [{main_topic}].
 
 **NOTE**: This agent supplements academic research. Prioritize authoritative sources.
 
@@ -147,87 +312,88 @@ Use WebSearch with academic domain filtering FIRST:
 - allowed_domains: ["scholar.google.com", "semanticscholar.org", "ieeexplore.ieee.org", "dl.acm.org", "nature.com", "science.org"]
 
 Step 2 - Industry and News Sources:
-Use WebSearch for:
-- Recent news (prioritize sources from [timeframe])
-- Industry reports and white papers
-- Official organizational statements
+Use WebSearch for recent news, industry reports, white papers, official statements.
 
 Step 3 - Content Extraction:
 Use WebFetch to extract content from promising URLs.
 
-Provide a structured summary with:
+Step 4 - Save findings:
+Write to: RESEARCH/{topic}/research_notes/web_researcher_findings.md
+
+Step 5 - Report to main controller:
+Use SendMessage with [FINDING REPORT] header including:
 - Key findings with source URLs
 - Source quality rating (A-E)
-- Confidence ratings for claims (High/Medium/Low)
-- Note: Mark non-peer-reviewed sources clearly
+- Confidence ratings (High/Medium/Low)
+- Mark non-peer-reviewed sources clearly
+
+Step 6 - Update and check:
+TaskUpdate to mark complete, TaskList for new work.
 ```
 
-#### Agent Type 3: Academic Verification Agent (1 agent) [REQUIRED]
+### Agent Type 3: Verifier Agent (1 agent) [REQUIRED]
 **Focus**: Cross-reference claims against academic literature
 **Priority**: HIGH - Essential for citation validation
 
-**Agent Template**:
+**Agent Template (Team Mode)**:
 ```
-Verify the following claims about [topic] using academic sources:
-[List key claims from other agents]
+You are a verification agent on a research team. Your role is to cross-validate claims from other researchers.
 
-**MANDATORY: Use MCP academic tools for verification.**
-
-For each claim:
-1. Search for supporting academic papers using:
+## Verification Process
+1. Receive claims via messages from main controller
+2. For each claim, search academic databases:
    - mcp__arxiv__search_papers
    - mcp__paper-search-mcp__search_google_scholar
-
-2. Read relevant papers to verify claims:
-   - mcp__arxiv__read_paper for detailed verification
-
-3. Provide verification report:
+3. Read relevant papers: mcp__arxiv__read_paper
+4. Produce verification report via SendMessage:
    - Claim text
-   - Verification status: Verified/Partially Verified/Unverified/Contradicted
-   - Supporting academic sources (minimum 2 for "Verified" status)
+   - Status: Verified/Partially Verified/Unverified/Contradicted
+   - Supporting academic sources (min 2 for Verified)
    - Contradicting sources (if any)
    - Source quality ratings (A-E)
    - Confidence level: High/Medium/Low
+5. TaskUpdate to mark verification tasks complete
+6. TaskList to check for more verification work
 ```
 
-#### Agent Type 4: Cross-Reference Agent (1 agent) [OPTIONAL]
-**Focus**: Fact-checking across all source types
-**Priority**: MEDIUM - Deploy if time permits
+### Agent Type 4: Synthesizer Agent (1 agent) [PROGRESSIVE]
+**Focus**: Progressive synthesis of incoming findings
+**Priority**: HIGH - Begins after 2+ research agents complete
 
-**Agent Template**:
+**Agent Template (Team Mode)**:
 ```
-Cross-reference findings from all agents about [topic]:
-[List key claims from other agents]
+You are a synthesis agent on a research team. Your role is to progressively combine findings into a coherent report.
 
-Search for:
-- Supporting evidence from multiple independent sources
-- Contradicting information
-- Original primary sources
-
-For each claim, provide:
-- Confidence rating: High/Medium/Low
-- Academic sources supporting (with quality ratings)
-- Non-academic sources supporting
-- Contradicting sources (if any)
-- Explanation of any discrepancies
+## Progressive Synthesis Process
+1. Wait for synthesis trigger from main controller via message
+2. Read completed findings from RESEARCH/{topic}/research_notes/
+3. Begin thematic clustering and integration
+4. Write draft sections to: RESEARCH/{topic}/full_report.md
+5. SendMessage draft status to main controller for GoT scoring
+6. Receive and incorporate new findings as they arrive via messages
+7. Update synthesis with verification results
+8. Finalize report when all findings are in
+9. TaskUpdate to mark synthesis complete
 ```
 
 **Recommended Agent Deployment Strategy**:
 
-| Research Type | Academic Agents | Web Agents | Verification | Cross-Ref |
-|---------------|-----------------|------------|--------------|-----------|
-| Scientific/Technical | 4 | 1 | 1 | Optional |
-| Medical/Health | 3 (with PubMed focus) | 1 | 1 | 1 |
-| Technology/Industry | 3 | 2 | 1 | Optional |
+| Research Type | Academic Agents | Web Agents | Verifier | Synthesizer |
+|---------------|-----------------|------------|----------|-------------|
+| Scientific/Technical | 4 | 1 | 1 | 1 |
+| Medical/Health | 3 (PubMed focus) | 1 | 1 | 1 |
+| Technology/Industry | 3 | 2 | 1 | 1 |
 | Policy/Social | 2 | 2 | 1 | 1 |
 
-**Execution Protocol**:
-1. **Launch ALL agents in a single response** using multiple Task tool calls
-2. **Academic agents MUST be included** in every research execution
-3. Use `run_in_background: true` for long-running agents
-4. Collect results using TaskOutput when agents complete
-5. Track agent progress with TodoWrite
-6. **Prioritize findings from academic sources** in synthesis phase
+**Execution Protocol Summary**:
+1. **TeamCreate** → Create research team
+2. **TaskCreate × N** → Define all tasks with dependencies
+3. **Task (team_name)** → Spawn teammates
+4. **TaskUpdate** → Assign tasks to teammates
+5. **Receive messages** → Process finding reports automatically
+6. **GoT Score** → Evaluate quality, redirect if needed
+7. **SendMessage** → Trigger synthesis, verification loops
+8. **shutdown_request + TeamDelete** → Graceful team shutdown
 
 ### Phase 4: Source Triangulation
 
@@ -504,12 +670,17 @@ Use GoT enhancement for:
 - Extract data from visual sources
 - Prompt: "Describe the data presented in this image, including labels, numbers, and trends"
 
-### Task (Multi-Agent Deployment)
-- **CRITICAL**: Launch multiple agents in ONE response
+### Team-Based Research (4+ Subtopics)
+- **TeamCreate**: Create research team for the topic
+- **TaskCreate/TaskUpdate/TaskList/TaskGet**: Shared task tracking with dependencies
+- **Task (with team_name)**: Spawn teammates that join the team
+- **SendMessage**: Coordinate between agents (findings, verification, synthesis)
+- **shutdown_request + TeamDelete**: Graceful team shutdown
+
+### Task Sub-Agents (1-3 Subtopics, Backward Compatible)
+- Launch multiple Task agents in ONE response
 - Use `subagent_type="general-purpose"` for research agents
-- Provide clear, detailed prompts to each agent
 - Use `run_in_background: true` for long tasks
-- Monitor progress with TodoWrite
 
 ### Read/Write
 - Save research findings to files regularly
@@ -517,10 +688,12 @@ Use GoT enhancement for:
 - Maintain source-to-claim mapping files
 - Archive agent outputs for reference
 
-### TodoWrite
-- Track all research phases
-- Mark items as in_progress/completed in real-time
-- Create granular todos for multi-step processes
+### TaskCreate/TaskUpdate (Shared Task Tracking)
+- Replace TodoWrite with shared TaskCreate/TaskUpdate
+- Create tasks for each research phase and subtopic
+- Set dependencies with addBlockedBy
+- Track status: pending → in_progress → completed
+- All team members can view and update task status
 
 ## Common Research Scenarios
 

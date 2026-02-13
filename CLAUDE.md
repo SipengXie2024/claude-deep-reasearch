@@ -61,6 +61,7 @@ The `.claude/skills/` directory contains modular research capabilities:
 | `got-controller` | Manage Graph of Thoughts for complex topics | Multi-faceted research, quality-critical |
 | `citation-validator` | Verify citation accuracy and quality | Final reports, publishing preparation |
 | `synthesizer` | Combine findings from multiple agents | Contradictory sources, comprehensive reports |
+| `team-coordinator` | Manage research team lifecycle | Complex research (4+ subtopics), team coordination |
 
 ### Graph of Thoughts Operations
 
@@ -77,23 +78,40 @@ The GoT framework manages research as a graph with these transformations:
 - **Depth-first**: Generate(3) → Take best → Generate(3) from it → Continue
 - **Breadth-first**: Generate(8) → KeepBestN(5) → Generate(2) from each → Aggregate
 
-### Multi-Agent Deployment Strategy
+### Agent Teams Architecture
 
 **⚠️ Academic-First Research**: All research MUST prioritize academic sources via MCP tools.
 
-When executing research, deploy agents in parallel:
+The framework supports two deployment modes based on research complexity:
 
+**Mode A: Agent Teams (4+ subtopics) — PREFERRED**
+```
+Phase 3: Team-Based Research
+├── TeamCreate: "research-{topic_slug}"
+├── TaskCreate × N: Define tasks with dependencies
+├── Spawn Teammates:
+│   ├── academic-1..N (teammates): Academic search per subtopic
+│   ├── web-researcher (teammate): Current info, news
+│   ├── verifier (teammate): Cross-validate claims
+│   └── synthesizer (teammate): Progressive synthesis
+├── Coordination via SendMessage:
+│   ├── Finding reports (Agent → Main Controller)
+│   ├── Verification requests (Main → Verifier)
+│   ├── Synthesis triggers (Main → Synthesizer)
+│   └── GoT redirects (Main → Agent, if score < 6.0)
+└── Shutdown: shutdown_request → TeamDelete
+```
+
+**Mode B: Task Sub-Agents (1-3 subtopics) — BACKWARD COMPATIBLE**
 ```
 Phase 3: Iterative Querying (Academic-First)
-├── Academic Research Agents (3-4) [PRIMARY]:
-│   ├── Use mcp__arxiv__search_papers
-│   ├── Use mcp__paper-search-mcp__search_google_scholar
-│   ├── Use mcp__paper-search-mcp__search_pubmed
-│   └── Use mcp__arxiv__read_paper for deep analysis
-├── Web Research Agents (1-2) [SUPPLEMENTARY]: Current info, news
-├── Academic Verification Agent (1) [REQUIRED]: Verify claims with papers
-└── Cross-Reference Agent (1) [OPTIONAL]: Multi-source fact-checking
+├── Academic Research Agents (3-4) [PRIMARY]
+├── Web Research Agents (1-2) [SUPPLEMENTARY]
+├── Verification Agent (1) [REQUIRED]
+└── All launched in single response with run_in_background: true
 ```
+
+**Auto-Detection**: The system automatically selects Team Mode for 4+ subtopics and Sub-Agent Mode for 1-3 subtopics. Falls back to Sub-Agent Mode if TeamCreate is unavailable.
 
 **MCP Academic Tools Priority**:
 1. `mcp__arxiv__search_papers` - arXiv (CS, Physics, Math, AI/ML)
@@ -109,6 +127,7 @@ Each agent receives:
 - Specific search queries
 - Expected output format
 - Citation requirements
+- **Team communication protocol** (Team Mode only): SendMessage for reports, TaskUpdate for status
 
 ## Output Structure
 
@@ -154,9 +173,13 @@ RESEARCH/[topic_name]/
 The `.claude/settings.local.json` file configures allowed tools:
 - **WebSearch**: General web searches
 - **mcp__playwright__***: Browser automation for dynamic content
-- **Task**: Deploy autonomous research agents
-- **TodoWrite**: Track research progress
+- **Task**: Deploy autonomous research agents or spawn teammates
+- **TeamCreate/TeamDelete**: Create and manage research teams
+- **SendMessage**: Inter-agent communication within teams
+- **TaskCreate/TaskUpdate/TaskList/TaskGet**: Shared task tracking with dependencies
 - **Read/Write**: Manage research documents
+- **mcp__arxiv__***: arXiv paper search and reading
+- **mcp__paper-search-mcp__***: Multi-database academic search
 
 ## Development Notes
 
@@ -186,7 +209,8 @@ When using GoT Controller for research:
 - Maintain graph state throughout execution
 - Document operations in `research_notes/got_operations_log.md`
 - Save individual nodes to `research_notes/got_nodes/[id].md`
-- Use TodoWrite to track GoT operations
+- Use TaskCreate/TaskUpdate to track GoT operations (replaces TodoWrite)
+- In Team Mode: shared task list supplements graph state for cross-agent visibility
 
 ## Key Documentation
 
@@ -200,7 +224,8 @@ When using GoT Controller for research:
 
 - All research outputs go in `RESEARCH/[topic]/` directories
 - Break large documents into smaller files to avoid context limits
-- Track task completion using TodoWrite
-- Use parallel agent deployment (single response, multiple Task calls)
+- Track task completion using TaskCreate/TaskUpdate (shared task tracking)
+- Use Agent Teams for complex research (4+ subtopics) or parallel Task deployment for simple research
+- Always use shutdown_request + TeamDelete for graceful team cleanup
 - Validate citations before finalizing reports
 - Never make claims without sources - state "Source needed" if uncertain

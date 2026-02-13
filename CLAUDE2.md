@@ -94,8 +94,10 @@ prep: make sure you put all of your produced documents inside of the folder /RES
 1. **WebSearch**: Built-in web search capability for finding relevant sources
 2. **WebFetch**: For extracting and analyzing content from specific URLs
 3. **Read/Write**: For managing research documents locally
-4. **Task**: For spawning autonomous agents for complex multi-step operations
-5. **TodoWrite/TodoRead**: For tracking research progress
+4. **Task**: For spawning autonomous agents or teammates
+5. **TeamCreate/TeamDelete**: For creating/managing coordinated research teams
+6. **SendMessage**: For inter-agent communication within teams
+7. **TaskCreate/TaskUpdate/TaskList/TaskGet**: For shared task tracking with dependencies
 
 ### MCP Server Tools:
 1. **mcp__filesystem__**: File system operations (read, write, search files)
@@ -337,7 +339,19 @@ Agents should follow this loop:
 5. **Repeat**: Continue until sufficient evidence gathered
 
 ### Multi-Agent Orchestration
-For complex topics, deploy specialized agents:
+
+**Team Mode (4+ subtopics) — PREFERRED**:
+For complex topics, create a coordinated research team:
+- **TeamCreate**: Create team "research-{topic_slug}"
+- **TaskCreate**: Define tasks with dependencies
+- **Spawn Teammates**: academic-1..N, web-researcher, verifier, synthesizer
+- **SendMessage**: Inter-agent communication for findings, verification, synthesis
+- **Progressive Synthesis**: Synthesizer starts after 2+ agents complete
+- **GoT Integration**: Main controller scores findings, redirects low-quality agents
+- **Graceful Shutdown**: shutdown_request to all → TeamDelete
+
+**Sub-Agent Mode (1-3 subtopics) — Backward Compatible**:
+For simpler topics, deploy specialized agents in parallel:
 - **Planner Agent**: Decomposes research into subtopics
 - **Search Agents**: Execute queries and retrieve sources
 - **Synthesis Agents**: Combine findings from multiple sources

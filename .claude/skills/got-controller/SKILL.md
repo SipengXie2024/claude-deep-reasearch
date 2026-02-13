@@ -5,6 +5,13 @@ user-invocable: true
 argument-hint: "[research topic for GoT-managed research]"
 allowed-tools:
   - Task
+  - TeamCreate
+  - TeamDelete
+  - SendMessage
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
   - WebSearch
   - WebFetch
   - Read
@@ -40,7 +47,9 @@ Graph of Thoughts (GoT) is a framework inspired by [SPCL, ETH Zürich](https://g
 - Expanding on high-quality findings
 - Exploring multiple angles simultaneously
 
-**Implementation**: Spawn k parallel research agents, each exploring a distinct aspect
+**Implementation**:
+- **Team Mode (4+ agents)**: Spawn k teammates via Task (with team_name), assign tasks via TaskUpdate, receive results via SendMessage
+- **Sub-Agent Mode (1-3 agents)**: Spawn k parallel Task agents in one response (backward compatible)
 
 **⚠️ Academic-First Strategy for Generate Operations**:
 When spawning research agents, use the following distribution:
@@ -62,7 +71,9 @@ Example for Generate(5):
 - You need to combine findings into a cohesive whole
 - Resolving contradictions between sources
 
-**Implementation**: Combine findings, resolve conflicts, extract key insights
+**Implementation**:
+- **Team Mode**: SendMessage to synthesizer teammate with all findings to combine; synthesizer produces unified output
+- **Sub-Agent Mode**: Launch 1 Task agent with all source nodes as context
 
 ### 3. Refine(1)
 
@@ -189,10 +200,18 @@ Maintain graph state using this structure:
 
 ## Tool Usage
 
-### Task Tool (Multi-Agent Deployment)
+### Team-Based Operations (4+ Agents)
+- **TeamCreate**: Create research team for GoT-managed research
+- **TaskCreate/TaskUpdate**: Track GoT operations as tasks with dependencies
+- **Task (with team_name)**: Spawn teammates for Generate operations
+- **SendMessage**: Trigger Aggregate via synthesizer, request Refine from agents
+- **TaskList**: Monitor operation progress
+- **shutdown_request + TeamDelete**: Clean up after research
+
+### Task Tool (Sub-Agent Mode, 1-3 Agents, Backward Compatible)
 Launch multiple Task agents in ONE response for Generate operations
 
-### TodoWrite (Progress Tracking)
+### TaskCreate/TaskUpdate (Shared Task Tracking)
 Track GoT operations: Generate(k), Score, KeepBestN(n), Aggregate(k), Refine(1)
 
 ### Read/Write (Graph Persistence)

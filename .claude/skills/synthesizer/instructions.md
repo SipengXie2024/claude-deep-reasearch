@@ -195,6 +195,61 @@ conditions (Source Y, 2024)."
 - [ ] Uncertainties and limitations are explicit
 - [ ] No new claims are introduced without sources
 
+## Progressive Synthesis Mode (Team Mode)
+
+When operating as a teammate in a research team, the synthesizer works in **progressive mode** — starting synthesis as soon as 2+ agents have completed their research, rather than waiting for all agents to finish.
+
+### How Progressive Synthesis Works
+
+1. **Trigger**: Main controller sends `[SYNTHESIS TRIGGER]` message when 2+ agents complete
+2. **Initial Clustering**: Read available findings, identify emerging themes
+3. **Draft Generation**: Write initial draft sections to `RESEARCH/{topic}/full_report.md`
+4. **Status Report**: SendMessage to main controller with draft status and quality score
+5. **Incremental Updates**: As new findings arrive via messages, integrate them into existing draft
+6. **Verification Integration**: When verifier results arrive, update claims and citations
+7. **Finalization**: When all findings are in, polish and finalize the report
+
+### Progressive Synthesis Protocol
+
+```markdown
+## As a Teammate
+
+### On receiving [SYNTHESIS TRIGGER]:
+1. Read all completed findings from RESEARCH/{topic}/research_notes/
+2. TaskUpdate: mark synthesis task as in_progress
+3. Create thematic clusters from available findings
+4. Write draft sections to full_report.md
+5. SendMessage to main controller:
+   - content: "[SYNTHESIS STATUS] Draft ready with {n} themes, score: {score}/10"
+   - summary: "Draft synthesis ready for review"
+
+### On receiving [SYNTHESIS UPDATE] (new findings):
+1. Read the new findings file
+2. Integrate into existing draft
+3. Update thematic clusters if needed
+4. Rewrite affected sections
+5. SendMessage status update to main controller
+
+### On receiving [AGGREGATE REQUEST]:
+1. Read all specified finding files
+2. Perform full aggregation with contradiction resolution
+3. Write comprehensive synthesis
+4. SendMessage result to main controller
+
+### On completion:
+1. Write finalized full_report.md and executive_summary.md
+2. TaskUpdate: mark synthesis task as completed
+3. TaskList: check for QA or additional tasks
+4. SendMessage final status to main controller
+```
+
+### Benefits of Progressive Synthesis
+
+- **Faster time-to-insight**: Draft available before all agents finish
+- **Better integration**: Themes identified early guide later synthesis
+- **Quality improvement**: More time for refinement of early sections
+- **Feedback loop**: Main controller can redirect research based on synthesis gaps
+
 ## Synthesis Techniques
 
 ### Technique 1: Thematic Grouping
@@ -350,6 +405,22 @@ Write synthesized report to:
 - `full_report.md` (comprehensive)
 - `executive_summary.md` (condensed)
 - `synthesis_notes.md` (process documentation)
+```
+
+### SendMessage (Team Mode)
+```markdown
+# Receive triggers and report status
+- Receive [SYNTHESIS TRIGGER] from main controller
+- Send [SYNTHESIS STATUS] with draft quality score
+- Receive [SYNTHESIS UPDATE] with new findings
+- Receive [AGGREGATE REQUEST] for full aggregation
+```
+
+### TaskUpdate/TaskList (Team Mode)
+```markdown
+# Track synthesis progress
+- TaskUpdate: mark synthesis task in_progress/completed
+- TaskList: check for new tasks after completing synthesis
 ```
 
 ### Task (for additional research)

@@ -40,7 +40,41 @@ When spawning research agents, prioritize academic sources:
 - **20-30% Web Research Agents**: Current info, news (supplementary)
 - **10% Verification Agents**: Cross-reference claims
 
-**Agent Template for Generate (Academic)**:
+**Agent Template for Generate (Academic) — Team Mode**:
+```
+You are an academic research teammate exploring [specific aspect] of [topic].
+
+Starting from the context:
+[PARENT NODE CONTENT]
+
+**MANDATORY: Use MCP academic tools as primary research method.**
+
+Step 1 - Academic Search:
+Use these MCP tools to find relevant papers:
+- mcp__arxiv__search_papers (for CS, Physics, Math, AI/ML)
+- mcp__paper-search-mcp__search_google_scholar (broad coverage)
+- mcp__paper-search-mcp__search_pubmed (biomedical topics)
+
+Step 2 - Deep Reading (for top papers):
+- Use mcp__arxiv__read_paper to read full paper content
+
+Step 3 - Save findings:
+Write to: RESEARCH/{topic}/research_notes/{agent_name}_findings.md
+
+Step 4 - Report to main controller:
+Use SendMessage:
+- type: "message", recipient: "team-lead"
+- content: "[FINDING REPORT] ..." with structured findings
+- summary: "Completed [aspect] research"
+
+Include: Self-assessed quality score (0-10), key findings with citations,
+confidence level (High/Medium/Low), related aspects worth exploring.
+
+Step 5 - Update status:
+TaskUpdate to mark your task complete, TaskList for new work.
+```
+
+**Agent Template for Generate (Academic) — Sub-Agent Mode (Backward Compatible)**:
 ```
 You are exploring [specific aspect] of [topic]. Starting from the context:
 [PARENT NODE CONTENT]
@@ -76,7 +110,8 @@ Your task: Research current developments and non-academic sources:
 3. Confidence level in findings (High/Medium/Low)
 4. Related aspects worth exploring further
 
-Return your findings as a structured node.
+In Team Mode: Save findings to file, SendMessage to "team-lead", TaskUpdate status.
+In Sub-Agent Mode: Return your findings as a structured node.
 ```
 
 ### 2. Aggregate(k)
@@ -96,7 +131,29 @@ Return your findings as a structured node.
 - Example: Aggregate(3) → 1 comprehensive synthesis
 ```
 
-**Agent Template for Aggregate**:
+**Agent Template for Aggregate — Team Mode**:
+```
+In Team Mode, trigger Aggregate by sending a message to the synthesizer teammate:
+
+SendMessage:
+  type: "message"
+  recipient: "synthesizer"
+  content: "[AGGREGATE REQUEST]
+    Combine the following findings into a comprehensive synthesis:
+    - Finding files: [file_path_1, file_path_2, file_path_3]
+    - Priority themes: [theme_list]
+
+    Requirements:
+    1. Identify common themes and consensus points
+    2. Note contradictions and explain discrepancies
+    3. Create comprehensive synthesis
+    4. Self-assess quality score (0-10)"
+  summary: "Aggregate k findings into synthesis"
+
+The synthesizer teammate will read the files, produce synthesis, and report back.
+```
+
+**Agent Template for Aggregate — Sub-Agent Mode (Backward Compatible)**:
 ```
 You are synthesizing findings from multiple research sources.
 
@@ -134,7 +191,29 @@ Output:
 - Example: Refine(node_5) → Improved node_5_v2 with score 7.5→8.2
 ```
 
-**Agent Template for Refine**:
+**Agent Template for Refine — Team Mode**:
+```
+In Team Mode, request refinement by messaging the relevant agent:
+
+SendMessage:
+  type: "message"
+  recipient: "{agent_name}"
+  content: "[REFINE REQUEST]
+    Your finding scored {score}/10. Please improve:
+    1. Improve clarity and organization
+    2. Ensure all claims have proper citations
+    3. Fill in any gaps or ambiguities
+    4. Enhance structure and readability
+    5. Self-assess new quality score (0-10)
+
+    Original finding file: {file_path}
+    Target score: >= 7.0"
+  summary: "Refine finding for higher quality"
+
+The agent will refine, update the file, and report back via SendMessage.
+```
+
+**Agent Template for Refine — Sub-Agent Mode (Backward Compatible)**:
 ```
 You are refining an existing research finding.
 
@@ -320,6 +399,26 @@ Maintain graph state using this structure:
 - **pruned**: Discarded due to low quality
 - **aggregated**: Merged into another node
 
+### Shared Task List (Team Mode)
+
+In Team Mode, the GoT graph state is supplemented by a shared task list that all teammates can access:
+
+```markdown
+## Shared Task Tracking
+
+Use TaskCreate/TaskUpdate alongside graph state:
+- Each Generate operation → TaskCreate for each new node
+- Each Score → TaskUpdate with score in description
+- Each Refine → TaskCreate for refinement task
+- Each Aggregate → TaskCreate for synthesis task
+
+Benefits:
+- All teammates can see research progress via TaskList
+- Dependencies between tasks enforce execution order
+- TaskUpdate provides status tracking across the team
+- Complements (not replaces) the GoT graph state file
+```
+
 ## Decision Logic
 
 ### When to Generate
@@ -426,37 +525,49 @@ Final Output Score: 9.5/10
 
 ## Tool Usage
 
-### Task Tool (Multi-Agent Deployment)
+### Team-Based Operations (4+ Agents) — PREFERRED
+
+```markdown
+**For Generate Operations**:
+1. TeamCreate (if not already created)
+2. TaskCreate for each new research path
+3. Task (with team_name, name) to spawn teammates
+4. TaskUpdate to assign tasks
+5. Receive finding reports via automatic messages
+6. GoT Score each finding
+
+**For Aggregate Operations**:
+SendMessage to synthesizer teammate:
+  "[AGGREGATE REQUEST] Combine findings from: [file_paths]"
+
+**For Refine Operations**:
+SendMessage to the relevant agent:
+  "[REFINE REQUEST] Improve finding at: [file_path], target score >= 7.0"
+
+**For Shutdown**:
+SendMessage type: "shutdown_request" to all teammates → TeamDelete
+```
+
+### Task Sub-Agent Mode (1-3 Agents) — Backward Compatible
+
 ```markdown
 **For Generate Operations**:
 Launch multiple Task agents in ONE response:
-```
-You are Agent 1 of 4, researching [aspect A]
-...
-You are Agent 2 of 4, researching [aspect B]
-...
-You are Agent 3 of 4, researching [aspect C]
-...
-You are Agent 4 of 4, researching [aspect D]
-...
-```
+- Agent 1: researching [aspect A]
+- Agent 2: researching [aspect B]
+- Agent 3: researching [aspect C]
 
 **For Aggregate Operations**:
-Launch 1 Task agent with all source nodes:
-```
-You are synthesizing findings from [k] research sources...
-[Include all k nodes as context]
-```
+Launch 1 Task agent with all source nodes as context.
 ```
 
-### TodoWrite (Progress Tracking)
+### TaskCreate/TaskUpdate (Shared Task Tracking)
 ```markdown
-Track GoT operations:
-- [ ] Generate(k) from [node] → [new_node_ids]
-- [ ] Score nodes [ids]
-- [ ] KeepBestN(n) → retained [ids]
-- [ ] Aggregate(k) → [new_node_id]
-- [ ] Refine(1) [node_id] → [improved_node_id]
+Track GoT operations as tasks:
+- TaskCreate: "Generate(k) from [node]" → track each agent
+- TaskUpdate: Score results, mark completed
+- TaskCreate: "Aggregate(k)" → synthesis task
+- TaskCreate: "Refine(1) [node_id]" → improvement task
 ```
 
 ### Read/Write (Graph Persistence)

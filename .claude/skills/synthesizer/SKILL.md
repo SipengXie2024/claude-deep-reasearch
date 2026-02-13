@@ -7,6 +7,10 @@ allowed-tools:
   - Read
   - Write
   - Task
+  - SendMessage
+  - TaskUpdate
+  - TaskList
+  - TaskGet
   - "mcp__arxiv__*"
   - "mcp__paper-search-mcp__*"
 ---
@@ -25,6 +29,7 @@ You are a **Research Synthesizer** responsible for combining findings from multi
 4. **Create Narrative**: Build a logical flow from introduction to conclusions
 5. **Maintain Citations**: Preserve source attribution throughout synthesis
 6. **Identify Gaps**: Note what is still unknown or needs further research
+7. **Progressive Synthesis** (Team Mode): Begin synthesis as soon as 2+ agents complete, continuously update as new findings arrive
 
 ## Synthesis Process
 
@@ -149,6 +154,15 @@ The Synthesizer is often called after GoT **Aggregate** operations to create coh
 
 ### Read/Write
 Save synthesis outputs to `full_report.md`, `executive_summary.md`, `synthesis_notes.md`
+
+### SendMessage (Team Mode)
+- Receive synthesis triggers from main controller
+- Send draft status updates back for GoT scoring
+- Receive new findings and corrections from main controller
+
+### TaskUpdate/TaskList (Team Mode)
+- Update synthesis task status (in_progress, completed)
+- Check TaskList for new findings to incorporate
 
 ### Task (for additional research)
 If synthesis reveals gaps, launch new research agents

@@ -5,6 +5,13 @@ user-invocable: true
 argument-hint: "[structured research prompt]"
 allowed-tools:
   - Task
+  - TeamCreate
+  - TeamDelete
+  - SendMessage
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
   - WebSearch
   - WebFetch
   - Read
@@ -44,25 +51,33 @@ Break down the main research question into actionable subtopics and create a res
 4. Create a research execution plan
 5. Present the plan for approval
 
-### Phase 3: Iterative Querying (Multi-Agent Execution)
+### Phase 3: Iterative Querying (Team-Based Research)
 
-Deploy multiple Task agents in parallel to gather information from different sources.
+Deploy a coordinated research team for complex topics (4+ subtopics) or independent Task agents for simple research (1-3 subtopics).
 
 **⚠️ CRITICAL: Academic-First Research Strategy**
 
 ALL research agents MUST prioritize academic sources via MCP tools. Academic papers provide higher quality (A-B rated) sources with proper citations.
 
+**Team Structure** (for complex research with 4+ subtopics):
+```
+Research Team: "research-{topic_slug}"
+├── academic-1..N (teammates): Academic search per subtopic
+├── web-researcher (teammate): Current info, news
+├── verifier (teammate): Cross-validate claims
+└── synthesizer (teammate): Progressive synthesis
+```
+
 **Agent Types (Priority Order)**:
 1. **Academic Research Agents (3-4 agents) [PRIMARY]**:
-   - Use MCP tools directly: `mcp__arxiv__search_papers`, `mcp__paper-search-mcp__search_google_scholar`, `mcp__paper-search-mcp__search_pubmed`
+   - Use MCP tools: `mcp__arxiv__search_papers`, `mcp__paper-search-mcp__search_google_scholar`, `mcp__paper-search-mcp__search_pubmed`
    - Deep reading: `mcp__arxiv__read_paper` for full paper content
-   - Or invoke `Skill(academic-search)` for automated multi-database search
 
 2. **Web Research Agents (1-2 agents) [SUPPLEMENTARY]**: Current info, news, industry reports
 
-3. **Academic Verification Agent (1 agent) [REQUIRED]**: Verify claims against academic literature using MCP tools
+3. **Verifier Agent (1 agent) [REQUIRED]**: Cross-validate claims using academic sources
 
-4. **Cross-Reference Agent (1 agent) [OPTIONAL]**: Multi-source fact-checking
+4. **Synthesizer Agent (1 agent) [PROGRESSIVE]**: Begin synthesis after 2+ agents complete
 
 **MCP Academic Tools Priority**:
 ```
@@ -80,7 +95,10 @@ Tier 3 (supplement only):
 - WebSearch with academic domain filtering
 ```
 
-**Execution Protocol**: Launch ALL agents in a single response using multiple Task tool calls. Academic agents MUST be included. Use `run_in_background: true` for long-running agents.
+**Execution Protocol**:
+- **Complex research (4+ subtopics)**: TeamCreate → TaskCreate × N → Spawn teammates → Assign tasks → Monitor via messages → GoT scoring → Progressive synthesis → shutdown_request → TeamDelete
+- **Simple research (1-3 subtopics)**: Launch ALL Task agents in a single response (backward compatible mode)
+- **Fallback**: If TeamCreate unavailable, auto-degrade to Task sub-agents
 
 ### Phase 4: Source Triangulation
 
@@ -145,10 +163,18 @@ Structure and write comprehensive research sections with inline citations for EV
 - Use for extracting content from specific URLs
 - Prefer mcp__web_reader__webReader for better extraction
 
-### Task (Multi-Agent Deployment)
-- **CRITICAL**: Launch multiple agents in ONE response
+### Team-Based Research (Complex Topics, 4+ Subtopics)
+- **TeamCreate**: Create research team with `team_name: "research-{topic_slug}"`
+- **TaskCreate**: Create tasks for each subtopic with dependencies
+- **Task** (with `team_name`): Spawn teammates (academic, web, verifier, synthesizer)
+- **TaskUpdate**: Assign tasks to teammates, track status
+- **SendMessage**: Coordinate between agents (findings, verification, synthesis triggers)
+- **TaskList/TaskGet**: Monitor progress and dependencies
+- **shutdown_request + TeamDelete**: Graceful team shutdown after completion
+
+### Task Sub-Agents (Simple Topics, 1-3 Subtopics, Backward Compatible)
+- Launch multiple Task agents in ONE response
 - Use `subagent_type="general-purpose"` for research agents
-- Provide clear, detailed prompts to each agent
 - Use `run_in_background: true` for long tasks
 
 ### Read/Write

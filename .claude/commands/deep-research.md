@@ -1,7 +1,7 @@
 ---
 description: 对指定主题执行完整的深度研究流程，从问题细化到最终报告生成
 argument-hint: [研究主题或问题]
-allowed-tools: Task, WebSearch, WebFetch, mcp__web_reader__webReader, Read, Write, TodoWrite, Skill(academic-search), mcp__arxiv__*, mcp__paper-search-mcp__*
+allowed-tools: Task, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, WebSearch, WebFetch, Read, Write, Skill(academic-search), mcp__arxiv__*, mcp__paper-search-mcp__*
 ---
 
 # Deep Research
@@ -22,12 +22,27 @@ Use the **question-refiner** skill to ask clarifying questions and generate a st
 ### Step 2: Research Planning
 Break down the research topic into 3-7 subtopics and create a detailed execution plan.
 
-### Step 3: Multi-Agent Research (Academic-First)
-Deploy multiple parallel research agents with **academic sources as PRIMARY**:
-- **Academic Research Agents (3-4 agents) [PRIMARY]**: Use MCP tools (`mcp__arxiv__*`, `mcp__paper-search-mcp__*`) to search arXiv, Google Scholar, PubMed, bioRxiv, medRxiv
-- **Web Research Agents (1-2 agents) [SUPPLEMENTARY]**: Current information, trends, news
-- **Academic Verification Agent (1 agent) [REQUIRED]**: Verify claims against academic literature
-- **Cross-Reference Agent (1 agent) [OPTIONAL]**: Multi-source fact-checking
+### Step 3: Team-Based Research (Academic-First)
+Deploy a coordinated research team (4+ subtopics) or parallel sub-agents (1-3 subtopics):
+
+**Team Mode (4+ subtopics)**:
+1. **TeamCreate**: Create research team "research-{topic_slug}"
+2. **TaskCreate**: Define tasks for each subtopic with dependencies
+3. **Spawn teammates**: academic-1..N, web-researcher, verifier, synthesizer
+4. **Assign tasks** via TaskUpdate
+5. **Monitor**: Receive finding reports, GoT score, redirect if needed
+6. **Progressive synthesis**: Trigger after 2+ agents complete
+7. **Verification loop**: Forward claims to verifier, apply corrections
+8. **Shutdown**: shutdown_request to all → TeamDelete
+
+**Sub-Agent Mode (1-3 subtopics, backward compatible)**:
+- Launch all Task agents in one response with `run_in_background: true`
+
+**Agent types (both modes)**:
+- **Academic Research Agents (3-4) [PRIMARY]**: Use MCP tools (`mcp__arxiv__*`, `mcp__paper-search-mcp__*`)
+- **Web Research Agents (1-2) [SUPPLEMENTARY]**: Current information, trends, news
+- **Verifier Agent (1) [REQUIRED]**: Cross-validate claims against academic literature
+- **Synthesizer Agent (1) [PROGRESSIVE]**: Begin synthesis after 2+ agents complete
 
 ### Step 4: Source Triangulation
 Compare findings across multiple sources and validate claims using the A-E quality rating system.

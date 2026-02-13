@@ -28,7 +28,18 @@
       "WebFetch(domain:nature.com)",
       "WebFetch(domain:science.org)",
       "WebFetch(domain:biorxiv.org)",
-      "WebFetch(domain:medrxiv.org)"
+      "WebFetch(domain:medrxiv.org)",
+      "Bash(wc:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh api:*)",
+      "Bash(echo:*)",
+      "TeamCreate",
+      "TeamDelete",
+      "SendMessage",
+      "TaskCreate",
+      "TaskUpdate",
+      "TaskList",
+      "TaskGet"
     ]
   },
   "enableAllProjectMcpServers": true,

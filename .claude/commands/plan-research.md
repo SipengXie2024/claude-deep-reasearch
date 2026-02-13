@@ -1,6 +1,7 @@
 ---
 description: 为研究主题创建详细的执行计划，包括子主题分解、智能体部署策略
 argument-hint: [已结构化的研究提示词]
+allowed-tools: Task, TaskCreate, TaskList, Read, Write
 ---
 
 # Research Planning
@@ -48,12 +49,14 @@ Use the **research-executor** skill (Phase 2: Retrieval Planning only) to:
 
 ...
 
-### Multi-Agent Deployment Strategy (Academic-First):
+### Research Deployment Strategy (Academic-First):
+- **Mode**: [Team Mode (4+ subtopics) / Sub-Agent Mode (1-3 subtopics)]
 - **Total Agents**: [number]
 - **Academic Research Agents (3-4) [PRIMARY]**: Use MCP tools (mcp__arxiv__*, mcp__paper-search-mcp__*)
 - **Web Research Agents (1-2) [SUPPLEMENTARY]**: Current info, news
-- **Academic Verification Agent (1) [REQUIRED]**: Verify claims against papers
-- **Cross-Reference Agent (1) [OPTIONAL]**: Multi-source fact-checking
+- **Verifier Agent (1) [REQUIRED]**: Cross-validate claims against academic literature
+- **Synthesizer Agent (1) [PROGRESSIVE]**: Begin synthesis after 2+ agents complete
+- **Team Name** (if Team Mode): "research-{topic_slug}"
 
 ### Output Structure:
 [Describe the folder and file structure]
