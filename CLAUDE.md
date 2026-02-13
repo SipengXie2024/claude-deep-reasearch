@@ -85,7 +85,9 @@ The GoT framework manages research as a graph with these transformations:
 
 The framework supports two deployment modes based on research complexity:
 
-**Mode A: Agent Teams (4+ subtopics) — PREFERRED**
+**⚠️ MANDATORY RULE: When subtopics >= 4, you MUST use Agent Teams (Mode A). Do NOT launch 4+ Task sub-agents with run_in_background as a shortcut. This is a hard requirement, not a suggestion.**
+
+**Mode A: Agent Teams (4+ subtopics) — MANDATORY**
 ```
 Phase 3: Team-Based Research
 ├── TeamCreate: "research-{topic_slug}"
@@ -103,16 +105,17 @@ Phase 3: Team-Based Research
 └── Shutdown: shutdown_request → TeamDelete
 ```
 
-**Mode B: Task Sub-Agents (1-3 subtopics) — BACKWARD COMPATIBLE**
+**Mode B: Task Sub-Agents — ONLY for 1-3 subtopics**
 ```
 Phase 3: Iterative Querying (Academic-First)
 ├── Academic Research Agents (3-4) [PRIMARY]
 ├── Web Research Agents (1-2) [SUPPLEMENTARY]
 ├── Verification Agent (1) [REQUIRED]
 └── All launched in single response with run_in_background: true
+🚫 Do NOT use this mode when subtopics >= 4
 ```
 
-**Auto-Detection**: The system automatically selects Team Mode for 4+ subtopics and Sub-Agent Mode for 1-3 subtopics. Falls back to Sub-Agent Mode if TeamCreate is unavailable.
+**Enforcement Rule**: 4+ subtopics → MUST use Team Mode (TeamCreate). Sub-Agent Mode is ONLY for 1-3 subtopics. Falls back to Sub-Agent Mode ONLY if TeamCreate tool call returns an error.
 
 **MCP Academic Tools Priority**:
 1. `mcp__arxiv__search_papers` - arXiv (CS, Physics, Math, AI/ML)

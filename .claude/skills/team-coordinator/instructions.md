@@ -342,23 +342,23 @@ You are a synthesis agent on a research team. Your role is to progressively comb
 
 ### Decision Logic
 
-The team coordinator supports both modes:
+The team coordinator enforces strict mode selection:
 
 ```
-# Auto-detect mode
+# MANDATORY mode selection
 if subtopic_count <= 3:
     # Simple mode: Use traditional Task sub-agents
-    # Faster startup, simpler coordination
     use_task_subagents()
 elif subtopic_count >= 4:
-    # Team mode: Use Agent Teams
-    # Better coordination, progressive synthesis, verification loops
-    use_agent_teams()
+    # Team mode: MUST use Agent Teams — this is NOT optional
+    # 🚫 FORBIDDEN: Launching 4+ Task agents with run_in_background
+    use_agent_teams()  # TeamCreate → TaskCreate → spawn teammates → SendMessage
 
-# Fallback
-if TeamCreate fails or is unavailable:
-    log_warning("TeamCreate unavailable, falling back to Task sub-agents")
+# Fallback — ONLY on actual TeamCreate error
+if TeamCreate fails with error:
+    log_warning("TeamCreate failed, falling back to Task sub-agents")
     use_task_subagents()
+# NOTE: "Preferring simpler approach" is NOT a valid reason to skip Teams
 ```
 
 ### Traditional Task Sub-Agent Mode (Backward Compatible)

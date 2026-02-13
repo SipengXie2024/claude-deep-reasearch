@@ -23,20 +23,22 @@ Use the **question-refiner** skill to ask clarifying questions and generate a st
 Break down the research topic into 3-7 subtopics and create a detailed execution plan.
 
 ### Step 3: Team-Based Research (Academic-First)
-Deploy a coordinated research team (4+ subtopics) or parallel sub-agents (1-3 subtopics):
 
-**Team Mode (4+ subtopics)**:
+**⚠️ MANDATORY: If 4+ subtopics → MUST use Agent Teams (TeamCreate). Do NOT fall back to Task sub-agents.**
+
+**Team Mode (4+ subtopics) — REQUIRED**:
 1. **TeamCreate**: Create research team "research-{topic_slug}"
 2. **TaskCreate**: Define tasks for each subtopic with dependencies
-3. **Spawn teammates**: academic-1..N, web-researcher, verifier, synthesizer
-4. **Assign tasks** via TaskUpdate
-5. **Monitor**: Receive finding reports, GoT score, redirect if needed
-6. **Progressive synthesis**: Trigger after 2+ agents complete
-7. **Verification loop**: Forward claims to verifier, apply corrections
-8. **Shutdown**: shutdown_request to all → TeamDelete
+3. **Spawn teammates** (Task with `team_name` param): academic-1..N, web-researcher, verifier, synthesizer
+4. **Assign tasks** via TaskUpdate with `owner` parameter
+5. **Monitor**: Receive finding reports via SendMessage, GoT score, redirect if needed
+6. **Progressive synthesis**: SendMessage to synthesizer after 2+ agents complete
+7. **Verification loop**: Forward claims to verifier via SendMessage, apply corrections
+8. **Shutdown**: shutdown_request to all teammates → TeamDelete
 
-**Sub-Agent Mode (1-3 subtopics, backward compatible)**:
+**Sub-Agent Mode (ONLY for 1-3 subtopics)**:
 - Launch all Task agents in one response with `run_in_background: true`
+- 🚫 Do NOT use this mode when subtopics >= 4
 
 **Agent types (both modes)**:
 - **Academic Research Agents (3-4) [PRIMARY]**: Use MCP tools (`mcp__arxiv__*`, `mcp__paper-search-mcp__*`)

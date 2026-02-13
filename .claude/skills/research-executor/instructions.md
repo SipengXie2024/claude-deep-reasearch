@@ -86,17 +86,21 @@ Deploy a coordinated research team for complex topics (4+ subtopics) or independ
 
 ## Mode Selection: Teams vs Sub-Agents
 
-**Auto-detect mode based on subtopic count**:
+**⚠️ MANDATORY RULE — READ CAREFULLY:**
 
-| Subtopics | Mode | Rationale |
-|-----------|------|-----------|
-| 1-3 | Task Sub-Agents (backward compatible) | Simpler, faster startup |
-| 4+ | Agent Teams | Better coordination, progressive synthesis, verification loops |
-| Fallback | Task Sub-Agents | If TeamCreate unavailable |
+| Subtopics | Mode | Enforcement |
+|-----------|------|-------------|
+| 1-3 | Task Sub-Agents | Allowed |
+| **4+** | **Agent Teams (TeamCreate)** | **REQUIRED — You MUST use TeamCreate. Do NOT use Task sub-agents with run_in_background.** |
+| Fallback | Task Sub-Agents | ONLY if TeamCreate tool call fails with an error |
+
+**🚫 VIOLATION**: Launching 4+ Task agents with `run_in_background: true` when subtopics >= 4 is FORBIDDEN. You MUST use TeamCreate → TaskCreate → spawn teammates with `team_name` parameter → SendMessage coordination → shutdown_request → TeamDelete.
+
+**✅ CORRECT FLOW for 4+ subtopics**: TeamCreate → TaskCreate × N → Task (with team_name) × N → coordinate via SendMessage → shutdown_request → TeamDelete
 
 ---
 
-## Mode A: Agent Teams (4+ Subtopics) — PREFERRED
+## Mode A: Agent Teams (4+ Subtopics) — MANDATORY
 
 ### Step 1: Create Team
 
@@ -219,9 +223,11 @@ TeamDelete  # Clean up team resources
 
 ---
 
-## Mode B: Task Sub-Agents (1-3 Subtopics) — BACKWARD COMPATIBLE
+## Mode B: Task Sub-Agents — ONLY for 1-3 Subtopics
 
-For simple research, continue using the traditional approach:
+**⚠️ This mode is ONLY allowed when subtopic count is 1, 2, or 3. If you have 4+ subtopics, you MUST use Mode A (Agent Teams) above. Do NOT use this mode as a shortcut.**
+
+For simple research (1-3 subtopics only):
 
 1. **Launch ALL agents in a single response** using multiple Task tool calls
 2. **Academic agents MUST be included** in every research execution
