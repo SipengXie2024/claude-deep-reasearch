@@ -11,6 +11,7 @@ This is a **Claude Code Deep Research Agent** framework that implements a sophis
 - **Graph of Thoughts (GoT)** Framework - Intelligent research path management with graph-based reasoning
 - **7-Phase Deep Research Process** - Structured methodology for quality research
 - **Multi-Agent Architecture** - Parallel research agents with specialized roles
+- **Agent Teams System** - Coordinated research teams with real-time communication, progressive synthesis, and dynamic task adjustment
 - **Citation Validation System** - A-E source quality ratings with chain-of-verification
 
 ## Quick Start Commands
@@ -168,18 +169,27 @@ RESEARCH/[topic_name]/
 - **D**: Preprints, preliminary research, blogs
 - **E**: Anecdotal, theoretical, speculative
 
-## Tool Permissions
+## Environment & Prerequisites
 
-The `.claude/settings.local.json` file configures allowed tools:
+### MCP Servers (configured in `.mcp.json`)
+- **arxiv**: Local server via `uvx arxiv-mcp-server` (storage: `/tmp/arxiv-papers`)
+- **paper-search-mcp**: Remote server at `server.smithery.ai` (Google Scholar, PubMed, bioRxiv, medRxiv)
+
+### Tool Permissions (`.claude/settings.local.json`)
 - **WebSearch**: General web searches
-- **mcp__playwright__***: Browser automation for dynamic content
+- **WebFetch**: Academic domains (arxiv.org, semanticscholar.org, pubmed, ieee, acm, etc.)
+- **mcp__playwright__browser_***: Browser navigation, click, type, snapshot
 - **Task**: Deploy autonomous research agents or spawn teammates
 - **TeamCreate/TeamDelete**: Create and manage research teams
 - **SendMessage**: Inter-agent communication within teams
 - **TaskCreate/TaskUpdate/TaskList/TaskGet**: Shared task tracking with dependencies
 - **Read/Write**: Manage research documents
-- **mcp__arxiv__***: arXiv paper search and reading
+- **mcp__arxiv__***: arXiv paper search, download, and reading
 - **mcp__paper-search-mcp__***: Multi-database academic search
+
+### Important Notes
+- `RESEARCH/` directory is in `.gitignore` — research outputs are local only
+- CLAUDE3.md exists but is a legacy planning document (superseded by CLAUDE2.md)
 
 ## Development Notes
 
@@ -214,11 +224,15 @@ When using GoT Controller for research:
 
 ## Key Documentation
 
-- `CLAUDE.md`: This file - Quick reference for Claude Code
-- `CLAUDE2.md`: Complete Graph of Thoughts implementation guide
-- `PROJECT_UNDERSTANDING.md`: Detailed architecture and design
+- `CLAUDE.md`: This file — Project overview, commands, architecture, constraints
+- `CLAUDE2.md`: Graph of Thoughts implementation guide (GoT concepts, agent templates, execution patterns)
+- `PROJECT_UNDERSTANDING.md`: Detailed architecture and design rationale
 - `IMPLEMENTATION_GUIDE.md`: User guide with examples and workflows
-- `.claude/skills/*/instructions.md`: Skill-specific instructions
+- `README.md`: Project introduction and setup
+- `skills.md`: Complete skill reference
+- `.claude/skills/*/instructions.md`: Skill-specific implementation details
+- `.claude/skills/team-coordinator/`: Team lifecycle management for Agent Teams
+- `.claude/commands/`: User-facing slash commands (`/deep-research`, `/plan-research`, etc.)
 
 ## Important Constraints
 
