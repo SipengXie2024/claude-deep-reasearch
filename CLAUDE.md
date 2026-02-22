@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 
-This is a **Claude Code Deep Research Agent** framework that implements a sophisticated multi-agent research system to conduct comprehensive, citation-backed research projects. It replicates and enhances OpenAI's Deep Research and Google Gemini's Deep Research capabilities using Claude Code's native features.
+This is a **Claude Code Deep Research Plugin** that implements a sophisticated multi-agent research system to conduct comprehensive, citation-backed research projects. It replicates and enhances OpenAI's Deep Research and Google Gemini's Deep Research capabilities as a distributable Claude Code plugin.
 
 **Core Technology:**
 - **Graph of Thoughts (GoT)** Framework - Intelligent research path management with graph-based reasoning
@@ -19,7 +19,7 @@ This is a **Claude Code Deep Research Agent** framework that implements a sophis
 ### Primary Research Command
 
 ```bash
-/deep-research [research topic]
+/deep-research:research [research topic]
 ```
 
 This single command executes the complete research workflow:
@@ -33,10 +33,10 @@ This single command executes the complete research workflow:
 ### Step-by-Step Commands
 
 ```bash
-/refine-question [raw question]     # Generate structured research prompt
-/plan-research [structured prompt]   # Create execution plan
-/synthesize-findings [directory]     # Combine research outputs
-/validate-citations [file]           # Verify citation quality
+/deep-research:refine-question [raw question]     # Generate structured research prompt
+/deep-research:plan-research [structured prompt]   # Create execution plan
+/deep-research:synthesize-findings [directory]     # Combine research outputs
+/deep-research:validate-citations [file]           # Verify citation quality
 ```
 
 ## Architecture
@@ -53,7 +53,7 @@ This single command executes the complete research workflow:
 
 ### Skills System
 
-The `.claude/skills/` directory contains modular research capabilities:
+The `skills/` directory contains modular research capabilities (plugin format):
 
 | Skill | Purpose | When to Use |
 |-------|---------|-------------|
@@ -194,11 +194,35 @@ RESEARCH/[topic_name]/
 - `RESEARCH/` directory is in `.gitignore` — research outputs are local only
 - CLAUDE3.md exists but is a legacy planning document (superseded by CLAUDE2.md)
 
+## Plugin Structure
+
+```
+deep-research/
+├── .claude-plugin/
+│   └── plugin.json              # Plugin manifest
+├── skills/                      # Agent Skills (model-invoked)
+│   ├── research-executor/
+│   ├── question-refiner/
+│   ├── got-controller/
+│   ├── citation-validator/
+│   ├── synthesizer/
+│   ├── academic-search/
+│   └── team-coordinator/
+├── commands/                    # Slash commands (user-invoked)
+│   ├── research.md              # /deep-research:research
+│   ├── refine-question.md
+│   ├── plan-research.md
+│   ├── synthesize-findings.md
+│   └── validate-citations.md
+├── .mcp.json                    # MCP server configs
+└── CLAUDE.md                    # This file
+```
+
 ## Development Notes
 
 ### When Modifying Skills
 
-Each skill in `.claude/skills/[name]/` contains:
+Each skill in `skills/[name]/` contains:
 - `SKILL.md`: YAML frontmatter + description
 - `instructions.md`: Detailed implementation guidance
 - `examples.md`: Usage examples
@@ -211,7 +235,7 @@ When creating new skills:
 
 ### When Modifying Commands
 
-Commands in `.claude/commands/[name].md` are user-facing shortcuts. Each command:
+Commands in `commands/[name].md` are user-facing shortcuts. Each command:
 - Has YAML frontmatter with description, argument hint, allowed tools
 - References the appropriate skill for execution
 - Should be simple and focused
@@ -233,9 +257,9 @@ When using GoT Controller for research:
 - `IMPLEMENTATION_GUIDE.md`: User guide with examples and workflows
 - `README.md`: Project introduction and setup
 - `skills.md`: Complete skill reference
-- `.claude/skills/*/instructions.md`: Skill-specific implementation details
-- `.claude/skills/team-coordinator/`: Team lifecycle management for Agent Teams
-- `.claude/commands/`: User-facing slash commands (`/deep-research`, `/plan-research`, etc.)
+- `skills/*/instructions.md`: Skill-specific implementation details
+- `skills/team-coordinator/`: Team lifecycle management for Agent Teams
+- `commands/`: User-facing slash commands (`/deep-research:research`, `/deep-research:plan-research`, etc.)
 
 ## Important Constraints
 

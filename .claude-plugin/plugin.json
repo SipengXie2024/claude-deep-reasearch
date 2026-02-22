@@ -1,0 +1,23 @@
+{
+  "name": "deep-research",
+  "description": "Multi-agent deep research framework with Graph of Thoughts, academic-first search, citation validation, and team coordination. Replicates OpenAI/Google Deep Research capabilities in Claude Code.",
+  "version": "1.0.0",
+  "author": {
+    "name": "sipeng"
+  },
+  "homepage": "https://github.com/anthropics/Claude-Code-Deep-Research",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anthropics/Claude-Code-Deep-Research"
+  },
+  "license": "MIT",
+  "keywords": [
+    "deep-research",
+    "multi-agent",
+    "academic-search",
+    "citation-validation",
+    "graph-of-thoughts",
+    "literature-review",
+    "research-automation"
+  ]
+}
