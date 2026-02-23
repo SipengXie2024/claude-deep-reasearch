@@ -1,0 +1,32 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-deep-research",
+  "description": "Multi-agent deep research framework with Graph of Thoughts, academic-first search, citation validation, and team coordination",
+  "owner": {
+    "name": "SipengXie2024",
+    "email": "sipeng@example.com"
+  },
+  "plugins": [
+    {
+      "name": "deep-research",
+      "description": "Multi-agent deep research framework with Graph of Thoughts, academic-first search, citation validation, and team coordination. Replicates OpenAI/Google Deep Research capabilities in Claude Code.",
+      "version": "1.0.0",
+      "author": {
+        "name": "SipengXie2024"
+      },
+      "source": ".",
+      "category": "research",
+      "license": "MIT",
+      "homepage": "https://github.com/SipengXie2024/claude-deep-reasearch",
+      "keywords": [
+        "deep-research",
+        "multi-agent",
+        "academic-search",
+        "citation-validation",
+        "graph-of-thoughts",
+        "literature-review",
+        "research-automation"
+      ]
+    }
+  ]
+}
