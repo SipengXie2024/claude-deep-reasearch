@@ -14,7 +14,7 @@
       "author": {
         "name": "SipengXie2024"
       },
-      "source": ".",
+      "source": "./plugins/deep-research",
       "category": "research",
       "license": "MIT",
       "homepage": "https://github.com/SipengXie2024/claude-deep-reasearch",
