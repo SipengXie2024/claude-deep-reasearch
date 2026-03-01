@@ -1,7 +1,18 @@
 {
   "name": "deep-research",
   "description": "Multi-agent deep research framework with Graph of Thoughts, academic-first search, citation validation, and team coordination.",
+  "version": "1.0.0",
   "author": {
     "name": "SipengXie2024"
-  }
+  },
+  "repository": "https://github.com/SipengXie2024/claude-deep-reasearch",
+  "license": "MIT",
+  "keywords": [
+    "deep-research",
+    "multi-agent",
+    "academic-search",
+    "citation-validation",
+    "graph-of-thoughts"
+  ],
+  "mcpServers": "./.mcp.json"
 }

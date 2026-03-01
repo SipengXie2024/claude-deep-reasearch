@@ -14,38 +14,37 @@ A sophisticated multi-agent deep research framework for Claude Code. Implements 
 
 ## Installation
 
-### As a Claude Code Plugin (Recommended)
+### Method 1: From GitHub (Recommended)
 
-**Option 1: From GitHub Marketplace**
+在 Claude Code 中直接运行：
 
 ```bash
-# Add the marketplace (one-time)
-/plugin marketplace add sipeng/Claude-Code-Deep-Research
-
-# Install the plugin
-/plugin install deep-research
+/plugin install github:SipengXie2024/claude-deep-reasearch
 ```
 
-**Option 2: Local Development**
+插件会自动安装，包括所有 skills、commands 和 MCP 服务器配置。
+
+### Method 2: Local Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/anthropics/Claude-Code-Deep-Research.git
+# 克隆仓库
+git clone https://github.com/SipengXie2024/claude-deep-reasearch.git
 
-# Run Claude Code with the plugin loaded
-claude --plugin-dir ./Claude-Code-Deep-Research
+# 在 Claude Code 中安装本地插件
+/plugin install file:///absolute/path/to/claude-deep-reasearch/plugins/deep-research
 ```
 
 ### Prerequisites
 
 - Claude Code CLI v1.0.33+
-- MCP servers (bundled via `.mcp.json`):
-  - `arxiv` - arXiv paper search & reading (requires `uvx`)
-  - `paper-search-mcp` - Google Scholar, PubMed, bioRxiv, medRxiv
+- `uvx` (用于运行 arXiv MCP 服务器)
+- MCP 服务器随插件自动安装（配置在插件的 `.mcp.json` 中）：
+  - `arxiv` - arXiv 论文搜索与阅读
+  - `paper-search-mcp` - Google Scholar、PubMed、bioRxiv、medRxiv
 
 ### Permission Setup
 
-After installing, add these permissions to your project or user settings:
+安装后，在 Claude Code 中首次使用时会提示授权。也可以预先在项目或用户设置中添加权限：
 
 ```json
 {
@@ -121,29 +120,24 @@ This single command will:
 ## Plugin Structure
 
 ```
-deep-research/
+plugins/deep-research/             # Plugin root (installed by /plugin install)
 ├── .claude-plugin/
-│   └── plugin.json              # Plugin manifest
-├── skills/                      # Agent Skills (model-invoked)
-│   ├── research-executor/       # 7-phase research execution
-│   ├── question-refiner/        # Question refinement
-│   ├── got-controller/          # Graph of Thoughts controller
-│   ├── citation-validator/      # Citation validation
-│   ├── synthesizer/             # Research synthesis
-│   ├── academic-search/         # Academic paper search
-│   └── team-coordinator/        # Agent team lifecycle
-├── commands/                    # User commands (slash commands)
-│   ├── research.md              # Main research command
-│   ├── refine-question.md       # Question refinement
-│   ├── plan-research.md         # Research planning
-│   ├── synthesize-findings.md   # Findings synthesis
-│   └── validate-citations.md    # Citation validation
-├── .mcp.json                    # MCP server configurations
-├── CLAUDE.md                    # Project instructions
-├── CLAUDE2.md                   # GoT implementation guide
-├── PROJECT_UNDERSTANDING.md     # Architecture documentation
-├── IMPLEMENTATION_GUIDE.md      # User guide with examples
-└── README.md                    # This file
+│   └── plugin.json                # Plugin manifest (includes mcpServers reference)
+├── .mcp.json                      # MCP server configurations (arxiv, paper-search-mcp)
+├── skills/                        # Agent Skills (model-invoked)
+│   ├── research-executor/         # 7-phase research execution
+│   ├── question-refiner/          # Question refinement
+│   ├── got-controller/            # Graph of Thoughts controller
+│   ├── citation-validator/        # Citation validation
+│   ├── synthesizer/               # Research synthesis
+│   ├── academic-search/           # Academic paper search
+│   └── team-coordinator/          # Agent team lifecycle
+└── commands/                      # User commands (slash commands)
+    ├── research.md                # Main research command
+    ├── refine-question.md         # Question refinement
+    ├── plan-research.md           # Research planning
+    ├── synthesize-findings.md     # Findings synthesis
+    └── validate-citations.md      # Citation validation
 ```
 
 ## Skills Reference

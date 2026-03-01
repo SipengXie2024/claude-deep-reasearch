@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "paper-search-mcp": {
+      "type": "http",
+      "url": "https://server.smithery.ai/@openags/paper-search-mcp/mcp"
+    },
+    "arxiv": {
+      "command": "uvx",
+      "args": ["arxiv-mcp-server", "--storage-path", "/tmp/arxiv-papers"]
+    }
+  }
+}
