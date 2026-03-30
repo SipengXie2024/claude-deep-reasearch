@@ -1,34 +1,6 @@
----
-name: academic-search
-description: 学术论文检索专家。使用多个学术数据库（arXiv、Semantic Scholar、PubMed、OpenAlex等）搜索相关论文，提供标准化元数据和质量评级。当需要查找学术论文、研究文献或技术文档时使用此技能。
-user-invocable: true
-argument-hint: "[search query or research topic]"
-allowed-tools:
-  - WebSearch
-  - WebFetch
-  - Read
-  - Write
-  - Task
-  - "mcp__paper-search-mcp__*"
-  - "mcp__arxiv__*"
----
+# Academic Search — Detailed Instructions
 
-# Academic Search Skill
-
-## Role
-
-You are an **Academic Paper Search Expert** responsible for finding, evaluating, and organizing scholarly literature from multiple academic databases.
-
-## Core Capabilities
-
-1. **Multi-Platform Academic Search**
-2. **Paper Quality Assessment**
-3. **Citation Metadata Extraction**
-4. **Research Relevance Ranking**
-
-## Search Workflow
-
-### Step 1: Understand Research Needs
+## Step 1: Understand Research Needs
 
 Analyze the user's query to identify:
 - **Primary Keywords**: Core concepts and terms
@@ -36,9 +8,9 @@ Analyze the user's query to identify:
 - **Time Frame**: Recent papers, historical, specific year range
 - **Paper Type**: Survey, empirical study, theoretical, applied
 
-### Step 2: Select Data Sources
+## Step 2: Select Data Sources
 
-Choose appropriate databases based on the research domain:
+Choose databases based on the research domain:
 
 | Database | Best For | Access Method |
 |----------|----------|---------------|
@@ -50,49 +22,60 @@ Choose appropriate databases based on the research domain:
 | **IEEE Xplore** | Engineering, Electronics | WebSearch with `site:ieeexplore.ieee.org` |
 | **ACM Digital Library** | Computer Science | WebSearch with `site:dl.acm.org` |
 
-### Step 3: Execute Search
+## Step 3: Execute Search
 
-**For arXiv papers** (PRIMARY):
-```
-Use mcp__arxiv__search_papers with:
-- query: search terms
-- max_results: 15-20
-- categories: relevant arXiv categories (cs.AI, cs.CL, cs.LG, cs.CV, etc.)
-- sort_by: "relevance"
-```
+### arXiv Papers (PRIMARY)
 
-**For Google Scholar** (broad coverage):
 ```
-Use mcp__paper-search-mcp__search_google_scholar with:
-- query: search terms
-- max_results: 10
+mcp__arxiv__search_papers:
+  query: "<search terms>"
+  max_results: 15-20
+  categories: ["cs.AI", "cs.CL", "cs.LG", "cs.CV"]  # adjust per topic
+  sort_by: "relevance"
 ```
 
-**For PubMed** (biomedical):
+### Google Scholar (broad coverage)
+
 ```
-Use mcp__paper-search-mcp__search_pubmed with:
-- query: search terms
-- max_results: 10
+mcp__paper-search-mcp__search_google_scholar:
+  query: "<search terms>"
+  max_results: 10
 ```
 
-**For bioRxiv/medRxiv** (preprints):
+### PubMed (biomedical)
+
 ```
-Use mcp__paper-search-mcp__search_biorxiv or mcp__paper-search-mcp__search_medrxiv with:
-- query: search terms
-- max_results: 10
+mcp__paper-search-mcp__search_pubmed:
+  query: "<search terms>"
+  max_results: 10
 ```
 
-**For deep paper reading**:
+### bioRxiv / medRxiv (preprints)
+
 ```
-Use mcp__arxiv__read_paper with:
-- paper_id: arXiv paper ID (e.g., "2301.12345")
-Returns full paper content in markdown format.
+mcp__paper-search-mcp__search_biorxiv:
+  query: "<search terms>"
+  max_results: 10
 ```
 
-**For other databases**:
-Use WebSearch with site-specific queries and domain filtering.
+### Deep Paper Reading
 
-### Step 4: Quality Assessment
+```
+mcp__arxiv__read_paper:
+  paper_id: "2301.12345"  # arXiv ID
+  # Returns full paper content in markdown format
+```
+
+### Other Databases (FALLBACK)
+
+Use WebSearch with domain filtering:
+```
+WebSearch with allowed_domains: ["ieeexplore.ieee.org"]
+WebSearch with allowed_domains: ["dl.acm.org"]
+WebSearch with allowed_domains: ["nature.com", "science.org"]
+```
+
+## Step 4: Quality Assessment
 
 Rate each paper using the academic quality scale:
 
@@ -105,13 +88,13 @@ Rate each paper using the academic quality scale:
 | **E** | Blog post, technical report, white paper |
 
 **Quality Indicators**:
-- Citation count relative to age
-- Venue impact factor/reputation
+- Citation count relative to paper age
+- Venue impact factor / reputation
 - Author h-index and institutional affiliation
 - Methodology rigor
 - Reproducibility (code/data availability)
 
-### Step 5: Format Output
+## Step 5: Format Output
 
 For each relevant paper, provide standardized metadata:
 
@@ -138,7 +121,7 @@ For each relevant paper, provide standardized metadata:
 **Relevance Score**: High/Medium/Low
 ```
 
-## Tool Usage Guidelines
+## Tool Reference
 
 ### mcp__arxiv__* Tools (PRIMARY)
 
@@ -147,14 +130,15 @@ For each relevant paper, provide standardized metadata:
 - `mcp__arxiv__read_paper`: Read full paper content in markdown format
 - `mcp__arxiv__list_papers`: List available downloaded papers
 
-**arXiv Categories Reference**:
-- `cs.AI` - Artificial Intelligence
-- `cs.CL` - Computation and Language (NLP)
-- `cs.CV` - Computer Vision
-- `cs.LG` - Machine Learning
-- `cs.MA` - Multi-Agent Systems
-- `cs.NE` - Neural and Evolutionary Computing
-- `stat.ML` - Machine Learning (Statistics)
+### arXiv Categories
+
+- `cs.AI` — Artificial Intelligence
+- `cs.CL` — Computation and Language (NLP)
+- `cs.CV` — Computer Vision
+- `cs.LG` — Machine Learning
+- `cs.MA` — Multi-Agent Systems
+- `cs.NE` — Neural and Evolutionary Computing
+- `stat.ML` — Machine Learning (Statistics)
 
 ### mcp__paper-search-mcp__* Tools
 
@@ -166,16 +150,7 @@ For each relevant paper, provide standardized metadata:
 - `mcp__paper-search-mcp__read_arxiv_paper`: Read arXiv paper content
 - `mcp__paper-search-mcp__download_arxiv`: Download arXiv PDF
 
-### WebSearch for Academic Databases (FALLBACK)
-
-Use domain filtering for databases without MCP tools:
-```
-WebSearch with allowed_domains: ["ieeexplore.ieee.org"]
-WebSearch with allowed_domains: ["dl.acm.org"]
-WebSearch with allowed_domains: ["nature.com", "science.org"]
-```
-
-## Output Format
+## Search Output Summary
 
 When completing a search, provide:
 
@@ -192,28 +167,7 @@ When called by `research-executor`:
 - Include seminal/foundational papers if highly cited
 - Provide citation-ready formatted references
 
-## Example Queries
-
-**AI/ML Research**:
-```
-/academic-search transformer attention mechanism
-/academic-search large language model alignment
-/academic-search reinforcement learning from human feedback
-```
-
-**Medical Research**:
-```
-/academic-search COVID-19 vaccine efficacy meta-analysis
-/academic-search CRISPR gene therapy clinical trials
-```
-
-**General Science**:
-```
-/academic-search quantum computing error correction
-/academic-search climate change mitigation strategies
-```
-
-## Remember
+## Important Reminders
 
 - Always verify paper URLs are accessible
 - Note if papers are behind paywalls

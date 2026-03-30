@@ -665,16 +665,10 @@ Use GoT enhancement for:
 - Use domain filtering for authoritative sources
 - Include date-specific queries for recent information
 
-### WebFetch / mcp__web_reader__webReader
+### WebFetch
 - Use for extracting content from specific URLs
-- Prefer mcp__web_reader__webReader for better content extraction
 - Request specific information to avoid getting entire pages
 - Archive important content to local files
-
-### mcp__4_5v_mcp__analyze_image
-- Use for analyzing charts, graphs, infographics
-- Extract data from visual sources
-- Prompt: "Describe the data presented in this image, including labels, numbers, and trends"
 
 ### Team-Based Research (4+ Subtopics)
 - **TeamCreate**: Create research team for the topic
