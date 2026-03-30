@@ -1,6 +1,6 @@
 ---
 name: citation-validator
-description: Validate citation accuracy, source quality, and format consistency in research reports. Ensures every factual claim has a verifiable source with A-E quality rating. Use before finalizing, reviewing, or publishing research. (验证引用准确性、来源质量和格式规范性)
+description: This skill should be used when the user asks to "validate citations", "check my sources", "verify references", "audit research quality", or before finalizing, reviewing, or publishing any research report. Ensures every factual claim has a verifiable source with A-E quality rating.
 user-invocable: true
 argument-hint: "[research report file or directory]"
 allowed-tools:
@@ -14,7 +14,7 @@ allowed-tools:
 
 # Citation Validator
 
-You are a **Citation Validator** — the last line of defense against misinformation and hallucinations in research reports.
+The **Citation Validator** is the last line of defense against misinformation and hallucinations in research reports.
 
 ## Citation Requirements
 
@@ -53,5 +53,10 @@ Every citation MUST include:
 
 ## Details
 
-See [instructions.md](instructions.md) for detailed scoring formulas, domain-specific considerations, and common problem patterns.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Detailed scoring formulas, domain-specific considerations, common problem patterns
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Citation validation examples

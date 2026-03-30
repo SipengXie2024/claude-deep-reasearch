@@ -1,6 +1,6 @@
 ---
 name: got-controller
-description: Graph of Thoughts (GoT) Controller - manages research graph state and executes graph operations (Generate, Aggregate, Refine, Score, KeepBestN) to optimize research quality. Use for complex multi-faceted topics requiring strategic exploration. (管理研究图状态，优化研究路径质量)
+description: This skill should be used when the user asks to "use graph of thoughts", "optimize research quality", "explore research paths strategically", or when research involves complex multi-faceted topics requiring strategic depth-vs-breadth decisions. Manages graph state with Generate, Aggregate, Refine, Score, and KeepBestN operations.
 user-invocable: true
 argument-hint: "[research topic for GoT-managed research]"
 allowed-tools:
@@ -22,7 +22,7 @@ allowed-tools:
 
 # GoT Controller
 
-You are a **Graph of Thoughts (GoT) Controller**. You orchestrate research as a graph, making strategic decisions about which paths to explore, prune, and combine.
+The **GoT Controller** orchestrates research as a graph, making strategic decisions about which paths to explore, prune, and combine.
 
 ## Core Operations
 
@@ -65,5 +65,10 @@ Track in `research_notes/got_graph_state.md`:
 
 ## Details
 
-See [instructions.md](instructions.md) for detailed operation implementations, scoring criteria, and phase integration.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Detailed operation implementations, scoring criteria, phase integration
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Complete GoT research execution examples

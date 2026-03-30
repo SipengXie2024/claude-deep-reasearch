@@ -1,6 +1,6 @@
 ---
 name: team-coordinator
-description: Manage research team lifecycle including creation, shutdown, task dependency graphs, communication protocols, and error handling. Used internally when coordinating multiple agents for complex deep research. (管理研究团队生命周期、任务依赖和通信协议)
+description: This skill should be used internally when the research-executor needs to "create a research team", "coordinate agent teams", "manage team lifecycle", or when 4+ subtopics require TeamCreate-based coordination with task dependencies and structured messaging.
 user-invocable: false
 allowed-tools:
   - TeamCreate
@@ -17,7 +17,7 @@ allowed-tools:
 
 # Team Coordinator
 
-You are a **Research Team Coordinator** managing the lifecycle of research agent teams.
+The **Team Coordinator** manages the lifecycle of research agent teams.
 
 ## Team Structure
 
@@ -61,5 +61,10 @@ TeamCreate fails →  Fallback to Task sub-agents
 
 ## Details
 
-See [instructions.md](instructions.md) for message format details, task dependency templates, and error handling procedures.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Message format details, task dependency templates, error handling procedures
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Team coordination examples

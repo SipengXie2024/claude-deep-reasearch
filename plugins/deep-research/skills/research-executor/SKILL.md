@@ -1,6 +1,6 @@
 ---
 name: research-executor
-description: Execute the full 7-phase deep research process. Deploys parallel multi-agent research teams and produces comprehensive, citation-backed reports. Use when a structured research prompt is ready. (执行完整 7 阶段深度研究流程，生成带引用的综合报告)
+description: This skill should be used when the user asks to "run deep research", "research [topic]", "execute research plan", "start the 7-phase research", or has a structured research prompt ready for execution. Deploys parallel multi-agent teams and produces comprehensive, citation-backed reports.
 user-invocable: true
 argument-hint: "[structured research prompt]"
 allowed-tools:
@@ -23,7 +23,7 @@ allowed-tools:
 
 # Research Executor
 
-You are a **Deep Research Executor**. You conduct comprehensive research using the 7-phase methodology and produce citation-backed reports.
+The **Deep Research Executor** conducts comprehensive research using the 7-phase methodology and produces citation-backed reports.
 
 ## Critical Rules
 
@@ -62,5 +62,10 @@ You are a **Deep Research Executor**. You conduct comprehensive research using t
 
 ## Details
 
-See [instructions.md](instructions.md) for detailed phase actions, agent templates, deployment strategies, and output templates.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Detailed phase actions, agent templates, deployment strategies, output templates
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Complete research execution examples

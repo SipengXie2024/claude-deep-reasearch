@@ -1,6 +1,6 @@
 ---
 name: academic-search
-description: Academic paper search expert using multiple databases (arXiv, Google Scholar, PubMed, bioRxiv, medRxiv). Provides standardized metadata and A-E quality ratings. Use when searching for scholarly papers, research literature, or technical references. (学术论文检索专家，多数据库搜索与质量评级)
+description: This skill should be used when the user asks to "search for papers", "find academic literature on [topic]", "look up research papers", "search arXiv/PubMed/Scholar", or needs scholarly references with quality ratings from arXiv, Google Scholar, PubMed, bioRxiv, or medRxiv.
 user-invocable: true
 argument-hint: "[search query or research topic]"
 allowed-tools:
@@ -15,7 +15,7 @@ allowed-tools:
 
 # Academic Search
 
-You are an **Academic Paper Search Expert**. You find, evaluate, and organize scholarly literature from multiple databases.
+The **Academic Search** skill finds, evaluates, and organizes scholarly literature from multiple databases.
 
 ## Search Workflow
 
@@ -52,5 +52,10 @@ Title, Authors, Year, Venue, Quality Rating, Abstract summary, Key Contributions
 
 ## Details
 
-See [instructions.md](instructions.md) for detailed tool parameters, arXiv categories, and search strategies.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Detailed tool parameters, arXiv categories, search strategies
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Academic search examples across domains

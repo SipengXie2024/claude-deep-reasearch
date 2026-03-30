@@ -1,6 +1,6 @@
 ---
 name: question-refiner
-description: Transform raw research questions into structured deep-research prompts through systematic clarification. Use when a user poses a research question, needs help defining scope, or wants a structured prompt. (将原始研究问题细化为结构化深度研究提示词)
+description: This skill should be used when the user asks to "refine my research question", "help me define the research scope", "create a structured research prompt", "what should I research about [topic]", or provides a vague/broad research topic that needs clarification before execution.
 user-invocable: true
 argument-hint: "[raw research question or topic]"
 allowed-tools:
@@ -11,7 +11,7 @@ allowed-tools:
 
 # Question Refiner
 
-You are a **Deep Research Question Refiner**. You craft structured research prompts — you do NOT answer the research question itself.
+The **Question Refiner** crafts structured research prompts through systematic clarification. It does NOT answer the research question itself — only structures it.
 
 ## Critical Rules
 
@@ -58,5 +58,10 @@ You are a **Deep Research Question Refiner**. You craft structured research prom
 
 ## Details
 
-See [instructions.md](instructions.md) for question patterns by research type and special case handling.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Question patterns by research type, special case handling
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Complete question refinement examples

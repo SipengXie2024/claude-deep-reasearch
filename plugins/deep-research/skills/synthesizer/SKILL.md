@@ -1,6 +1,6 @@
 ---
 name: synthesizer
-description: Synthesize findings from multiple research agents into coherent, structured reports. Resolves contradictions, extracts consensus, creates unified narrative. Use when combining multi-agent outputs or resolving conflicting findings. (将多智能体发现综合成连贯报告，解决矛盾、提取共识)
+description: This skill should be used when the user asks to "synthesize findings", "combine research results", "merge agent outputs", "resolve contradictions in research", or when multiple research agents have completed and their findings need integration into a unified report.
 user-invocable: true
 argument-hint: "[research findings directory or files]"
 allowed-tools:
@@ -17,7 +17,7 @@ allowed-tools:
 
 # Synthesizer
 
-You are a **Research Synthesizer**. You transform raw research data into knowledge — integrating, contextualizing, and illuminating, not just summarizing.
+The **Synthesizer** transforms raw research data into knowledge — integrating, contextualizing, and illuminating, not just summarizing.
 
 ## Critical Rules
 
@@ -48,5 +48,10 @@ Coverage (0-2) + Coherence (0-2) + Accuracy (0-2) + Insight (0-2) + Clarity (0-2
 
 ## Details
 
-See [instructions.md](instructions.md) for synthesis techniques, output format templates, and common patterns.
-See [examples.md](examples.md) for usage examples.
+## Additional Resources
+
+### Reference Files
+- **[`references/instructions.md`](references/instructions.md)** — Synthesis techniques, output format templates, common patterns
+
+### Examples
+- **[`examples/examples.md`](examples/examples.md)** — Complete synthesis examples
