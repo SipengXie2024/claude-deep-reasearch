@@ -1,4 +1,5 @@
 ---
+name: research
 description: 对指定主题执行完整的深度研究流程，从问题细化到最终报告生成
 argument-hint: [研究主题或问题]
 allowed-tools: Task, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, WebSearch, WebFetch, Read, Write, Skill(academic-search), mcp__arxiv__*, mcp__paper-search-mcp__*

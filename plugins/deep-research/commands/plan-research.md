@@ -1,4 +1,5 @@
 ---
+name: plan-research
 description: 为研究主题创建详细的执行计划，包括子主题分解、智能体部署策略
 argument-hint: [已结构化的研究提示词]
 allowed-tools: Task, TaskCreate, TaskList, Read, Write

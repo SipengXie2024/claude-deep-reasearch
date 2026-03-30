@@ -1,4 +1,5 @@
 ---
+name: refine-question
 description: 将原始研究问题细化为结构化的深度研究提示词
 argument-hint: [原始研究问题]
 ---
